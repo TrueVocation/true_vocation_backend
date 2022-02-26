@@ -113,6 +113,10 @@ public class CacheConfiguration {
             createCache(cm, com.truevocation.domain.AppUser.class.getName() + ".favorites");
             createCache(cm, com.truevocation.domain.AppUser.class.getName() + ".commentAnswers");
             createCache(cm, com.truevocation.domain.AppUser.class.getName() + ".likes");
+            createCache(cm, com.truevocation.domain.University.class.getName() + ".pictures");
+            createCache(cm, com.truevocation.domain.Course.class.getName() + ".pictures");
+            createCache(cm, com.truevocation.domain.Portfolio.class.getName() + ".pictures");
+            createCache(cm, com.truevocation.domain.Pictures.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

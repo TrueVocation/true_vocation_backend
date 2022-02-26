@@ -8,12 +8,12 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * A Contact.
+ * A Pictures.
  */
 @Entity
-@Table(name = "contact")
+@Table(name = "pictures")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Contact implements Serializable {
+public class Pictures implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -23,12 +23,9 @@ public class Contact implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "type")
-    private String type;
-
     @Size(max = 1000)
-    @Column(name = "contact", length = 1000)
-    private String contact;
+    @Column(name = "picture", length = 1000)
+    private String picture;
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "contacts", "pictures", "city", "professions" }, allowSetters = true)
@@ -48,7 +45,7 @@ public class Contact implements Serializable {
         return this.id;
     }
 
-    public Contact id(Long id) {
+    public Pictures id(Long id) {
         this.setId(id);
         return this;
     }
@@ -57,30 +54,17 @@ public class Contact implements Serializable {
         this.id = id;
     }
 
-    public String getType() {
-        return this.type;
+    public String getPicture() {
+        return this.picture;
     }
 
-    public Contact type(String type) {
-        this.setType(type);
+    public Pictures picture(String picture) {
+        this.setPicture(picture);
         return this;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getContact() {
-        return this.contact;
-    }
-
-    public Contact contact(String contact) {
-        this.setContact(contact);
-        return this;
-    }
-
-    public void setContact(String contact) {
-        this.contact = contact;
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
     public Course getCourse() {
@@ -91,7 +75,7 @@ public class Contact implements Serializable {
         this.course = course;
     }
 
-    public Contact course(Course course) {
+    public Pictures course(Course course) {
         this.setCourse(course);
         return this;
     }
@@ -104,7 +88,7 @@ public class Contact implements Serializable {
         this.university = university;
     }
 
-    public Contact university(University university) {
+    public Pictures university(University university) {
         this.setUniversity(university);
         return this;
     }
@@ -117,7 +101,7 @@ public class Contact implements Serializable {
         this.portfolio = portfolio;
     }
 
-    public Contact portfolio(Portfolio portfolio) {
+    public Pictures portfolio(Portfolio portfolio) {
         this.setPortfolio(portfolio);
         return this;
     }
@@ -129,10 +113,10 @@ public class Contact implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Contact)) {
+        if (!(o instanceof Pictures)) {
             return false;
         }
-        return id != null && id.equals(((Contact) o).id);
+        return id != null && id.equals(((Pictures) o).id);
     }
 
     @Override
@@ -144,10 +128,9 @@ public class Contact implements Serializable {
     // prettier-ignore
     @Override
     public String toString() {
-        return "Contact{" +
+        return "Pictures{" +
             "id=" + getId() +
-            ", type='" + getType() + "'" +
-            ", contact='" + getContact() + "'" +
+            ", picture='" + getPicture() + "'" +
             "}";
     }
 }

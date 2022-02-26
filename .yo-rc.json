@@ -44,14 +44,15 @@
       "TestResult",
       "Recommendation",
       "AnswerUser",
-      "AppUser"
+      "AppUser",
+      "Pictures"
     ],
     "entitySuffix": "",
     "jhiPrefix": "",
     "jhipsterVersion": "7.6.0",
     "jwtSecretKey": "ZGM4MDY5MjY3ZjQyZGMxNzRjMjRiNmU5ZmQ5N2QwZjdmY2Y0MzM0NWNkNWNkMmVmMmE0NTY5N2YxMjYzNGEzZWI0MWNkODg2ZWY0ZmJkMmFkM2FhNGFhNmY5Y2Y0NzEzZjBjYWM5NGYyMzBkMjc1NDRjMWJhN2M2MDU5NTUzNmE=",
     "languages": ["en", "ru"],
-    "lastLiquibaseTimestamp": 1645285997000,
+    "lastLiquibaseTimestamp": 1645858364000,
     "messageBroker": false,
     "nativeLanguage": "en",
     "otherModules": [],

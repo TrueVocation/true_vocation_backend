@@ -57,6 +57,11 @@ public class Portfolio implements Serializable {
     @JsonIgnoreProperties(value = { "portfolio" }, allowSetters = true)
     private Set<Achievement> achievements = new HashSet<>();
 
+    @OneToMany(mappedBy = "portfolio")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "course", "university", "portfolio" }, allowSetters = true)
+    private Set<Pictures> pictures = new HashSet<>();
+
     @ManyToMany
     @JoinTable(
         name = "rel_portfolio__language",
@@ -216,6 +221,37 @@ public class Portfolio implements Serializable {
     public Portfolio removeAchievement(Achievement achievement) {
         this.achievements.remove(achievement);
         achievement.setPortfolio(null);
+        return this;
+    }
+
+    public Set<Pictures> getPictures() {
+        return this.pictures;
+    }
+
+    public void setPictures(Set<Pictures> pictures) {
+        if (this.pictures != null) {
+            this.pictures.forEach(i -> i.setPortfolio(null));
+        }
+        if (pictures != null) {
+            pictures.forEach(i -> i.setPortfolio(this));
+        }
+        this.pictures = pictures;
+    }
+
+    public Portfolio pictures(Set<Pictures> pictures) {
+        this.setPictures(pictures);
+        return this;
+    }
+
+    public Portfolio addPictures(Pictures pictures) {
+        this.pictures.add(pictures);
+        pictures.setPortfolio(this);
+        return this;
+    }
+
+    public Portfolio removePictures(Pictures pictures) {
+        this.pictures.remove(pictures);
+        pictures.setPortfolio(null);
         return this;
     }
 

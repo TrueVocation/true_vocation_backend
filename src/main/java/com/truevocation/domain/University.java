@@ -65,6 +65,11 @@ public class University implements Serializable {
     @JsonIgnoreProperties(value = { "likes", "commentAnswers", "university", "user", "post" }, allowSetters = true)
     private Set<Comments> comments = new HashSet<>();
 
+    @OneToMany(mappedBy = "university")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "course", "university", "portfolio" }, allowSetters = true)
+    private Set<Pictures> pictures = new HashSet<>();
+
     @ManyToMany
     @JoinTable(
         name = "rel_university__faculty",
@@ -288,6 +293,37 @@ public class University implements Serializable {
     public University removeComments(Comments comments) {
         this.comments.remove(comments);
         comments.setUniversity(null);
+        return this;
+    }
+
+    public Set<Pictures> getPictures() {
+        return this.pictures;
+    }
+
+    public void setPictures(Set<Pictures> pictures) {
+        if (this.pictures != null) {
+            this.pictures.forEach(i -> i.setUniversity(null));
+        }
+        if (pictures != null) {
+            pictures.forEach(i -> i.setUniversity(this));
+        }
+        this.pictures = pictures;
+    }
+
+    public University pictures(Set<Pictures> pictures) {
+        this.setPictures(pictures);
+        return this;
+    }
+
+    public University addPictures(Pictures pictures) {
+        this.pictures.add(pictures);
+        pictures.setUniversity(this);
+        return this;
+    }
+
+    public University removePictures(Pictures pictures) {
+        this.pictures.remove(pictures);
+        pictures.setUniversity(null);
         return this;
     }
 

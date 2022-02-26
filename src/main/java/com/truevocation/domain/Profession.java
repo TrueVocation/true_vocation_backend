@@ -58,7 +58,7 @@ public class Profession implements Serializable {
         inverseJoinColumns = @JoinColumn(name = "course_id")
     )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "contacts", "city", "professions" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "contacts", "pictures", "city", "professions" }, allowSetters = true)
     private Set<Course> courses = new HashSet<>();
 
     @ManyToMany(mappedBy = "professions")

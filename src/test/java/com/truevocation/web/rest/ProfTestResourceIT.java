@@ -40,6 +40,9 @@ class ProfTestResourceIT {
     private static final String DEFAULT_INSTRUCTION = "AAAAAAAAAA";
     private static final String UPDATED_INSTRUCTION = "BBBBBBBBBB";
 
+    private static final String DEFAULT_PICTURE = "AAAAAAAAAA";
+    private static final String UPDATED_PICTURE = "BBBBBBBBBB";
+
     private static final String ENTITY_API_URL = "/api/prof-tests";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -67,7 +70,11 @@ class ProfTestResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static ProfTest createEntity(EntityManager em) {
-        ProfTest profTest = new ProfTest().name(DEFAULT_NAME).description(DEFAULT_DESCRIPTION).instruction(DEFAULT_INSTRUCTION);
+        ProfTest profTest = new ProfTest()
+            .name(DEFAULT_NAME)
+            .description(DEFAULT_DESCRIPTION)
+            .instruction(DEFAULT_INSTRUCTION)
+            .picture(DEFAULT_PICTURE);
         return profTest;
     }
 
@@ -78,7 +85,11 @@ class ProfTestResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static ProfTest createUpdatedEntity(EntityManager em) {
-        ProfTest profTest = new ProfTest().name(UPDATED_NAME).description(UPDATED_DESCRIPTION).instruction(UPDATED_INSTRUCTION);
+        ProfTest profTest = new ProfTest()
+            .name(UPDATED_NAME)
+            .description(UPDATED_DESCRIPTION)
+            .instruction(UPDATED_INSTRUCTION)
+            .picture(UPDATED_PICTURE);
         return profTest;
     }
 
@@ -104,6 +115,7 @@ class ProfTestResourceIT {
         assertThat(testProfTest.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testProfTest.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
         assertThat(testProfTest.getInstruction()).isEqualTo(DEFAULT_INSTRUCTION);
+        assertThat(testProfTest.getPicture()).isEqualTo(DEFAULT_PICTURE);
     }
 
     @Test
@@ -139,7 +151,8 @@ class ProfTestResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(profTest.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
-            .andExpect(jsonPath("$.[*].instruction").value(hasItem(DEFAULT_INSTRUCTION)));
+            .andExpect(jsonPath("$.[*].instruction").value(hasItem(DEFAULT_INSTRUCTION)))
+            .andExpect(jsonPath("$.[*].picture").value(hasItem(DEFAULT_PICTURE)));
     }
 
     @Test
@@ -156,7 +169,8 @@ class ProfTestResourceIT {
             .andExpect(jsonPath("$.id").value(profTest.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
-            .andExpect(jsonPath("$.instruction").value(DEFAULT_INSTRUCTION));
+            .andExpect(jsonPath("$.instruction").value(DEFAULT_INSTRUCTION))
+            .andExpect(jsonPath("$.picture").value(DEFAULT_PICTURE));
     }
 
     @Test
@@ -178,7 +192,7 @@ class ProfTestResourceIT {
         ProfTest updatedProfTest = profTestRepository.findById(profTest.getId()).get();
         // Disconnect from session so that the updates on updatedProfTest are not directly saved in db
         em.detach(updatedProfTest);
-        updatedProfTest.name(UPDATED_NAME).description(UPDATED_DESCRIPTION).instruction(UPDATED_INSTRUCTION);
+        updatedProfTest.name(UPDATED_NAME).description(UPDATED_DESCRIPTION).instruction(UPDATED_INSTRUCTION).picture(UPDATED_PICTURE);
         ProfTestDTO profTestDTO = profTestMapper.toDto(updatedProfTest);
 
         restProfTestMockMvc
@@ -196,6 +210,7 @@ class ProfTestResourceIT {
         assertThat(testProfTest.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testProfTest.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
         assertThat(testProfTest.getInstruction()).isEqualTo(UPDATED_INSTRUCTION);
+        assertThat(testProfTest.getPicture()).isEqualTo(UPDATED_PICTURE);
     }
 
     @Test
@@ -275,7 +290,7 @@ class ProfTestResourceIT {
         ProfTest partialUpdatedProfTest = new ProfTest();
         partialUpdatedProfTest.setId(profTest.getId());
 
-        partialUpdatedProfTest.instruction(UPDATED_INSTRUCTION);
+        partialUpdatedProfTest.instruction(UPDATED_INSTRUCTION).picture(UPDATED_PICTURE);
 
         restProfTestMockMvc
             .perform(
@@ -292,6 +307,7 @@ class ProfTestResourceIT {
         assertThat(testProfTest.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testProfTest.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
         assertThat(testProfTest.getInstruction()).isEqualTo(UPDATED_INSTRUCTION);
+        assertThat(testProfTest.getPicture()).isEqualTo(UPDATED_PICTURE);
     }
 
     @Test
@@ -306,7 +322,11 @@ class ProfTestResourceIT {
         ProfTest partialUpdatedProfTest = new ProfTest();
         partialUpdatedProfTest.setId(profTest.getId());
 
-        partialUpdatedProfTest.name(UPDATED_NAME).description(UPDATED_DESCRIPTION).instruction(UPDATED_INSTRUCTION);
+        partialUpdatedProfTest
+            .name(UPDATED_NAME)
+            .description(UPDATED_DESCRIPTION)
+            .instruction(UPDATED_INSTRUCTION)
+            .picture(UPDATED_PICTURE);
 
         restProfTestMockMvc
             .perform(
@@ -323,6 +343,7 @@ class ProfTestResourceIT {
         assertThat(testProfTest.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testProfTest.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
         assertThat(testProfTest.getInstruction()).isEqualTo(UPDATED_INSTRUCTION);
+        assertThat(testProfTest.getPicture()).isEqualTo(UPDATED_PICTURE);
     }
 
     @Test

@@ -39,12 +39,12 @@ public class City implements Serializable {
 
     @OneToMany(mappedBy = "city")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "contacts", "favorites", "comments", "faculties", "city" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "contacts", "favorites", "comments", "pictures", "faculties", "city" }, allowSetters = true)
     private Set<University> universities = new HashSet<>();
 
     @OneToMany(mappedBy = "city")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "contacts", "city", "professions" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "contacts", "pictures", "city", "professions" }, allowSetters = true)
     private Set<Course> courses = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

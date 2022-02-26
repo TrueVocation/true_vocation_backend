@@ -36,6 +36,10 @@ public class ProfTest implements Serializable {
     @Column(name = "instruction", length = 1000)
     private String instruction;
 
+    @Size(max = 1000)
+    @Column(name = "picture", length = 1000)
+    private String picture;
+
     @OneToMany(mappedBy = "profTest")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "answers", "answerUser", "profTest" }, allowSetters = true)
@@ -98,6 +102,19 @@ public class ProfTest implements Serializable {
 
     public void setInstruction(String instruction) {
         this.instruction = instruction;
+    }
+
+    public String getPicture() {
+        return this.picture;
+    }
+
+    public ProfTest picture(String picture) {
+        this.setPicture(picture);
+        return this;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
     public Set<Question> getQuestions() {
@@ -189,6 +206,7 @@ public class ProfTest implements Serializable {
             ", name='" + getName() + "'" +
             ", description='" + getDescription() + "'" +
             ", instruction='" + getInstruction() + "'" +
+            ", picture='" + getPicture() + "'" +
             "}";
     }
 }

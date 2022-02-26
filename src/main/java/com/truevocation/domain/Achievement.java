@@ -36,7 +36,7 @@ public class Achievement implements Serializable {
     private String orientation;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "appUser", "contacts", "achievements", "languages", "schools" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "appUser", "contacts", "achievements", "pictures", "languages", "schools" }, allowSetters = true)
     private Portfolio portfolio;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

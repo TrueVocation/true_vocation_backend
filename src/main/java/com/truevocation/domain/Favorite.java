@@ -26,7 +26,7 @@ public class Favorite implements Serializable {
     private String type;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "contacts", "favorites", "comments", "faculties", "city" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "contacts", "favorites", "comments", "pictures", "faculties", "city" }, allowSetters = true)
     private University university;
 
     @ManyToOne

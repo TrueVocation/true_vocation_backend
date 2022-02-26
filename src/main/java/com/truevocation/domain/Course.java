@@ -40,6 +40,11 @@ public class Course implements Serializable {
     @JsonIgnoreProperties(value = { "course", "university", "portfolio" }, allowSetters = true)
     private Set<Contact> contacts = new HashSet<>();
 
+    @OneToMany(mappedBy = "course")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "course", "university", "portfolio" }, allowSetters = true)
+    private Set<Pictures> pictures = new HashSet<>();
+
     @ManyToOne
     @JsonIgnoreProperties(value = { "demandProfessionCities", "schools", "universities", "courses" }, allowSetters = true)
     private City city;
@@ -131,6 +136,37 @@ public class Course implements Serializable {
     public Course removeContact(Contact contact) {
         this.contacts.remove(contact);
         contact.setCourse(null);
+        return this;
+    }
+
+    public Set<Pictures> getPictures() {
+        return this.pictures;
+    }
+
+    public void setPictures(Set<Pictures> pictures) {
+        if (this.pictures != null) {
+            this.pictures.forEach(i -> i.setCourse(null));
+        }
+        if (pictures != null) {
+            pictures.forEach(i -> i.setCourse(this));
+        }
+        this.pictures = pictures;
+    }
+
+    public Course pictures(Set<Pictures> pictures) {
+        this.setPictures(pictures);
+        return this;
+    }
+
+    public Course addPictures(Pictures pictures) {
+        this.pictures.add(pictures);
+        pictures.setCourse(this);
+        return this;
+    }
+
+    public Course removePictures(Pictures pictures) {
+        this.pictures.remove(pictures);
+        pictures.setCourse(null);
         return this;
     }
 

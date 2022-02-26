@@ -55,7 +55,7 @@ public class AppUser implements Serializable {
     @JsonIgnoreProperties(value = { "comment", "user", "post" }, allowSetters = true)
     private Set<Likes> likes = new HashSet<>();
 
-    @JsonIgnoreProperties(value = { "appUser", "contacts", "achievements", "languages", "schools" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "appUser", "contacts", "achievements", "pictures", "languages", "schools" }, allowSetters = true)
     @OneToOne(mappedBy = "appUser")
     private Portfolio portfolio;
 

@@ -12,6 +12,6 @@
                                  baseTableName="app_user"
                                  constraintName="fk_app_user__user_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="user"/>
+                                 referencedTableName="_user"/>
     </changeSet>
 </databaseChangeLog>

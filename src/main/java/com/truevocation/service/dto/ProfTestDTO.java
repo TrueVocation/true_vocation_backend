@@ -19,6 +19,9 @@ public class ProfTestDTO implements Serializable {
     @Size(max = 1000)
     private String instruction;
 
+    @Size(max = 1000)
+    private String picture;
+
     public Long getId() {
         return id;
     }
@@ -51,6 +54,14 @@ public class ProfTestDTO implements Serializable {
         this.instruction = instruction;
     }
 
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -80,6 +91,7 @@ public class ProfTestDTO implements Serializable {
             ", name='" + getName() + "'" +
             ", description='" + getDescription() + "'" +
             ", instruction='" + getInstruction() + "'" +
+            ", picture='" + getPicture() + "'" +
             "}";
     }
 }
