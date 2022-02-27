@@ -210,3 +210,6 @@ jhipster:
 # ===================================================================
 
 # application:
+
+truevocation:
+  is-production: true

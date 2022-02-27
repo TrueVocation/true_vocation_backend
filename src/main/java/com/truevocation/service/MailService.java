@@ -7,6 +7,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -25,15 +26,24 @@ import tech.jhipster.config.JHipsterProperties;
 @Service
 public class MailService {
 
+    @Value("${truevocation.is-production}")
+    private boolean isProduction;
+
     private final Logger log = LoggerFactory.getLogger(MailService.class);
 
     private static final String USER = "user";
 
     private static final String BASE_URL = "baseUrl";
 
-    private static final  String CLIENT_URL_NAME = "client_url";
+    private static final  String CLIENT_URL = "client_url";
 
-    private static final  String CLIENT_URL = "http://localhost:9000/login";
+    private static final  String BASE_URL_LOCALHOST = "http://localhost:8080";
+
+    private static final  String BASE_URL_PRODUCTION = "http://localhost:8080";
+
+    private static final  String CLIENT_URL_LOCALHOST = "http://localhost:9000/login";
+
+    private static final  String CLIENT_URL_PRODUCTION = "http://localhost:9000";
 
     private final JHipsterProperties jHipsterProperties;
 
@@ -90,8 +100,10 @@ public class MailService {
         Locale locale = Locale.forLanguageTag(user.getLangKey());
         Context context = new Context(locale);
         context.setVariable(USER, user);
-        context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
-        context.setVariable(CLIENT_URL_NAME, CLIENT_URL);
+        String client_url = isProduction ? CLIENT_URL_PRODUCTION : CLIENT_URL_LOCALHOST;
+        String base_url = isProduction ? BASE_URL_PRODUCTION : BASE_URL_LOCALHOST;
+        context.setVariable(BASE_URL, base_url);
+        context.setVariable(CLIENT_URL, client_url);
         String content = templateEngine.process(templateName, context);
         String subject = messageSource.getMessage(titleKey, null, locale);
         sendEmail(user.getEmail(), subject, content, false, true);
