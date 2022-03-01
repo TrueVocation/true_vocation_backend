@@ -108,7 +108,7 @@ public class AccountResource {
      * @return the current user.
      * @throws RuntimeException {@code 500 (Internal Server Error)} if the user couldn't be returned.
      */
-    @GetMapping("/current-user")
+    @GetMapping
     public AdminUserDTO getAccount() {
         return userService
             .getUserWithAuthorities()
@@ -123,7 +123,7 @@ public class AccountResource {
      * @throws EmailAlreadyUsedException {@code 400 (Bad Request)} if the email is already used.
      * @throws RuntimeException {@code 500 (Internal Server Error)} if the user login wasn't found.
      */
-    @PostMapping("/update")
+    @PostMapping
     public void saveAccount(@Valid @RequestBody AdminUserDTO userDTO) {
         String userLogin = SecurityUtils
             .getCurrentUserLogin()
