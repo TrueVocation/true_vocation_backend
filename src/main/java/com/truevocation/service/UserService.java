@@ -76,6 +76,7 @@ public class UserService {
                 user.setPassword(passwordEncoder.encode(newPassword));
                 user.setResetKey(null);
                 user.setResetDate(null);
+                user.setLangKey("en");
                 this.clearUserCaches(user);
                 return user;
             });

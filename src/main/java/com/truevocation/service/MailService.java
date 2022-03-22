@@ -39,11 +39,11 @@ public class MailService {
 
     private static final  String BASE_URL_LOCALHOST = "http://localhost:8080";
 
-    private static final  String BASE_URL_PRODUCTION = "http://localhost:8080";
+    private static final  String BASE_URL_PRODUCTION = "https://true-vocation.herokuapp.com/";
 
-    private static final  String CLIENT_URL_LOCALHOST = "http://localhost:9000/login";
+    private static final  String CLIENT_URL_LOCALHOST = "http://localhost:3000";
 
-    private static final  String CLIENT_URL_PRODUCTION = "http://localhost:9000";
+    private static final  String CLIENT_URL_PRODUCTION = "https://true-vocation-22.herokuapp.com";
 
     private final JHipsterProperties jHipsterProperties;
 
