@@ -26,6 +26,8 @@ public class SpecialtyDTO implements Serializable {
 
     private String picture;
 
+    private String type;
+
     private Set<SubjectDTO> subjects = new HashSet<>();
 
     private Set<ProfessionDTO> professions = new HashSet<>();
@@ -88,6 +90,14 @@ public class SpecialtyDTO implements Serializable {
         this.picture = picture;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public Set<SubjectDTO> getSubjects() {
         return subjects;
     }
@@ -144,6 +154,7 @@ public class SpecialtyDTO implements Serializable {
             ", minScoreGeneral=" + getMinScoreGeneral() +
             ", minScoreQuota=" + getMinScoreQuota() +
             ", picture='" + getPicture() + "'" +
+            ", type='" + getType() + "'" +
             ", subjects=" + getSubjects() +
             ", professions=" + getProfessions() +
             ", faculty=" + getFaculty() +
