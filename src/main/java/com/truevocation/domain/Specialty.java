@@ -44,6 +44,9 @@ public class Specialty implements Serializable {
     @Column(name = "picture")
     private String picture;
 
+    @Column(name = "type")
+    private String type;
+
     @ManyToMany
     @JoinTable(
         name = "rel_specialty__subject",
@@ -161,6 +164,19 @@ public class Specialty implements Serializable {
         this.picture = picture;
     }
 
+    public String getType() {
+        return this.type;
+    }
+
+    public Specialty type(String type) {
+        this.setType(type);
+        return this;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public Set<Subject> getSubjects() {
         return this.subjects;
     }
@@ -254,6 +270,7 @@ public class Specialty implements Serializable {
             ", minScoreGeneral=" + getMinScoreGeneral() +
             ", minScoreQuota=" + getMinScoreQuota() +
             ", picture='" + getPicture() + "'" +
+            ", type='" + getType() + "'" +
             "}";
     }
 }

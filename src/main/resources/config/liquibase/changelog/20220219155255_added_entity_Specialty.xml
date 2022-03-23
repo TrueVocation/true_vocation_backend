@@ -32,6 +32,9 @@
             <column name="picture" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
+            <column name="type" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="faculty_id" type="bigint">
                 <constraints nullable="true" />
             </column>
@@ -87,6 +90,7 @@
             <column name="min_score_general" type="numeric"/>
             <column name="min_score_quota" type="numeric"/>
             <column name="picture" type="string"/>
+            <column name="type" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

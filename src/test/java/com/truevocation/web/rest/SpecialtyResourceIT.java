@@ -58,6 +58,9 @@ class SpecialtyResourceIT {
     private static final String DEFAULT_PICTURE = "AAAAAAAAAA";
     private static final String UPDATED_PICTURE = "BBBBBBBBBB";
 
+    private static final String DEFAULT_TYPE = "AAAAAAAAAA";
+    private static final String UPDATED_TYPE = "BBBBBBBBBB";
+
     private static final String ENTITY_API_URL = "/api/specialties";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -97,7 +100,8 @@ class SpecialtyResourceIT {
             .totalGrants(DEFAULT_TOTAL_GRANTS)
             .minScoreGeneral(DEFAULT_MIN_SCORE_GENERAL)
             .minScoreQuota(DEFAULT_MIN_SCORE_QUOTA)
-            .picture(DEFAULT_PICTURE);
+            .picture(DEFAULT_PICTURE)
+            .type(DEFAULT_TYPE);
         return specialty;
     }
 
@@ -114,7 +118,8 @@ class SpecialtyResourceIT {
             .totalGrants(UPDATED_TOTAL_GRANTS)
             .minScoreGeneral(UPDATED_MIN_SCORE_GENERAL)
             .minScoreQuota(UPDATED_MIN_SCORE_QUOTA)
-            .picture(UPDATED_PICTURE);
+            .picture(UPDATED_PICTURE)
+            .type(UPDATED_TYPE);
         return specialty;
     }
 
@@ -143,6 +148,7 @@ class SpecialtyResourceIT {
         assertThat(testSpecialty.getMinScoreGeneral()).isEqualTo(DEFAULT_MIN_SCORE_GENERAL);
         assertThat(testSpecialty.getMinScoreQuota()).isEqualTo(DEFAULT_MIN_SCORE_QUOTA);
         assertThat(testSpecialty.getPicture()).isEqualTo(DEFAULT_PICTURE);
+        assertThat(testSpecialty.getType()).isEqualTo(DEFAULT_TYPE);
     }
 
     @Test
@@ -181,7 +187,8 @@ class SpecialtyResourceIT {
             .andExpect(jsonPath("$.[*].totalGrants").value(hasItem(DEFAULT_TOTAL_GRANTS)))
             .andExpect(jsonPath("$.[*].minScoreGeneral").value(hasItem(DEFAULT_MIN_SCORE_GENERAL)))
             .andExpect(jsonPath("$.[*].minScoreQuota").value(hasItem(DEFAULT_MIN_SCORE_QUOTA)))
-            .andExpect(jsonPath("$.[*].picture").value(hasItem(DEFAULT_PICTURE)));
+            .andExpect(jsonPath("$.[*].picture").value(hasItem(DEFAULT_PICTURE)))
+            .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE)));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -219,7 +226,8 @@ class SpecialtyResourceIT {
             .andExpect(jsonPath("$.totalGrants").value(DEFAULT_TOTAL_GRANTS))
             .andExpect(jsonPath("$.minScoreGeneral").value(DEFAULT_MIN_SCORE_GENERAL))
             .andExpect(jsonPath("$.minScoreQuota").value(DEFAULT_MIN_SCORE_QUOTA))
-            .andExpect(jsonPath("$.picture").value(DEFAULT_PICTURE));
+            .andExpect(jsonPath("$.picture").value(DEFAULT_PICTURE))
+            .andExpect(jsonPath("$.type").value(DEFAULT_TYPE));
     }
 
     @Test
@@ -247,7 +255,8 @@ class SpecialtyResourceIT {
             .totalGrants(UPDATED_TOTAL_GRANTS)
             .minScoreGeneral(UPDATED_MIN_SCORE_GENERAL)
             .minScoreQuota(UPDATED_MIN_SCORE_QUOTA)
-            .picture(UPDATED_PICTURE);
+            .picture(UPDATED_PICTURE)
+            .type(UPDATED_TYPE);
         SpecialtyDTO specialtyDTO = specialtyMapper.toDto(updatedSpecialty);
 
         restSpecialtyMockMvc
@@ -268,6 +277,7 @@ class SpecialtyResourceIT {
         assertThat(testSpecialty.getMinScoreGeneral()).isEqualTo(UPDATED_MIN_SCORE_GENERAL);
         assertThat(testSpecialty.getMinScoreQuota()).isEqualTo(UPDATED_MIN_SCORE_QUOTA);
         assertThat(testSpecialty.getPicture()).isEqualTo(UPDATED_PICTURE);
+        assertThat(testSpecialty.getType()).isEqualTo(UPDATED_TYPE);
     }
 
     @Test
@@ -371,6 +381,7 @@ class SpecialtyResourceIT {
         assertThat(testSpecialty.getMinScoreGeneral()).isEqualTo(UPDATED_MIN_SCORE_GENERAL);
         assertThat(testSpecialty.getMinScoreQuota()).isEqualTo(UPDATED_MIN_SCORE_QUOTA);
         assertThat(testSpecialty.getPicture()).isEqualTo(UPDATED_PICTURE);
+        assertThat(testSpecialty.getType()).isEqualTo(DEFAULT_TYPE);
     }
 
     @Test
@@ -391,7 +402,8 @@ class SpecialtyResourceIT {
             .totalGrants(UPDATED_TOTAL_GRANTS)
             .minScoreGeneral(UPDATED_MIN_SCORE_GENERAL)
             .minScoreQuota(UPDATED_MIN_SCORE_QUOTA)
-            .picture(UPDATED_PICTURE);
+            .picture(UPDATED_PICTURE)
+            .type(UPDATED_TYPE);
 
         restSpecialtyMockMvc
             .perform(
@@ -411,6 +423,7 @@ class SpecialtyResourceIT {
         assertThat(testSpecialty.getMinScoreGeneral()).isEqualTo(UPDATED_MIN_SCORE_GENERAL);
         assertThat(testSpecialty.getMinScoreQuota()).isEqualTo(UPDATED_MIN_SCORE_QUOTA);
         assertThat(testSpecialty.getPicture()).isEqualTo(UPDATED_PICTURE);
+        assertThat(testSpecialty.getType()).isEqualTo(UPDATED_TYPE);
     }
 
     @Test

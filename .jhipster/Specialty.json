@@ -30,6 +30,10 @@
     {
       "fieldName": "picture",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "type",
+      "fieldType": "String"
     }
   ],
   "fluentMethods": true,
