@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+    <!--
+        Added the constraints for entity Specialty.
+    -->
+    <changeSet id="20220219155255-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="specialty_id"
+                                 baseTableName="rel_specialty__subject"
+                                 constraintName="fk_rel_specialty__subject__specialty_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="specialty"/>
+
+        <addForeignKeyConstraint baseColumnNames="subject_id"
+                                 baseTableName="rel_specialty__subject"
+                                 constraintName="fk_rel_specialty__subject__subject_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="subject"/>
+
+        <addForeignKeyConstraint baseColumnNames="specialty_id"
+                                 baseTableName="rel_specialty__profession"
+                                 constraintName="fk_rel_specialty__profession__specialty_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="specialty"/>
+
+        <addForeignKeyConstraint baseColumnNames="profession_id"
+                                 baseTableName="rel_specialty__profession"
+                                 constraintName="fk_rel_specialty__profession__profession_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="profession"/>
+
+        <addForeignKeyConstraint baseColumnNames="faculty_id"
+                                 baseTableName="specialty"
+                                 constraintName="fk_specialty__faculty_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="faculty"/>
+    </changeSet>
+</databaseChangeLog>

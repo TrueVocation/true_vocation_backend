@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.constraints.*;
 
+import static com.truevocation.config.Constants.DEFAULT_LANGUAGE;
+
 /**
  * A DTO representing a user, with his authorities.
  */
@@ -36,7 +38,7 @@ public class AdminUserDTO {
     private boolean activated = false;
 
     @Size(min = 2, max = 10)
-    private String langKey;
+    private String langKey = DEFAULT_LANGUAGE;
 
     private String createdBy;
 
