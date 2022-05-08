@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
+
 
 /**
  * REST controller for managing {@link com.truevocation.domain.Question}.
@@ -34,6 +36,8 @@ public class QuestionResource {
     private final Logger log = LoggerFactory.getLogger(QuestionResource.class);
 
     private static final String ENTITY_NAME = "question";
+
+    private static final String HEADER_X_TOTAL_COUNT = "X-Total-Count";
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
@@ -164,6 +168,31 @@ public class QuestionResource {
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+
+    @GetMapping("/test-questions/{testId}")
+    public ResponseEntity<Page<QuestionDTO>> getAllQuestionsByTestId(
+        Pageable pageable,
+        @RequestParam(required = false, defaultValue = "true") boolean eagerload,
+        @PathVariable Long testId
+    ) {
+        Page<QuestionDTO> page;
+        if (eagerload) {
+            page = questionService.findAllWithEagerRelationships(pageable,testId);
+        } else {
+            page = questionService.findAll(pageable);
+        }
+//        int totalCount = questionService.findAllCountByTestId(testId);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add(HEADER_X_TOTAL_COUNT, String.valueOf(totalCount));
+//        StringBuilder link = new StringBuilder();
+//        if (page.getNumber() < (page.getTotalPages() - 1)) {
+//            link.append(page.getNumber()+1);
+//            headers.add(HttpHeaders.LINK, link.toString());
+//        }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page);
     }
 
     /**

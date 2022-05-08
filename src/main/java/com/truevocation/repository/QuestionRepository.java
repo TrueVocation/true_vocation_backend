@@ -20,6 +20,17 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     )
     Page<Question> findAllWithEagerRelationships(Pageable pageable);
 
+    @Query(
+        value = "select distinct question from Question question inner join question.answers where question.profTest.id =:testId",
+        countQuery = "select count(distinct question) from Question question"
+    )
+    Page<Question> findAllWithEagerRelationships(Pageable pageable,@Param("testId") Long testId);
+
+    @Query(
+        value = "select count(distinct question) from Question question where question.profTest.id =:testId"
+    )
+    int findAllTestQuestionsCount(@Param("testId") Long testId);
+
     @Query("select distinct question from Question question left join fetch question.answers")
     List<Question> findAllWithEagerRelationships();
 
