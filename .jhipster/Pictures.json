@@ -10,6 +10,10 @@
       "fieldType": "String",
       "fieldValidateRules": ["maxlength"],
       "fieldValidateRulesMaxlength": "1000"
+    },
+    {
+      "fieldName": "url",
+      "fieldType": "String"
     }
   ],
   "fluentMethods": true,

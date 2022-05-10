@@ -27,6 +27,9 @@ public class Pictures implements Serializable {
     @Column(name = "picture", length = 1000)
     private String picture;
 
+    @Column(name = "url")
+    private String url;
+
     @ManyToOne
     @JsonIgnoreProperties(value = { "contacts", "pictures", "city", "professions" }, allowSetters = true)
     private Course course;
@@ -65,6 +68,19 @@ public class Pictures implements Serializable {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public Pictures url(String url) {
+        this.setUrl(url);
+        return this;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Course getCourse() {
@@ -131,6 +147,7 @@ public class Pictures implements Serializable {
         return "Pictures{" +
             "id=" + getId() +
             ", picture='" + getPicture() + "'" +
+            ", url='" + getUrl() + "'" +
             "}";
     }
 }

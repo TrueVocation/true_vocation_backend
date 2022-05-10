@@ -14,6 +14,8 @@ public class PicturesDTO implements Serializable {
     @Size(max = 1000)
     private String picture;
 
+    private String url;
+
     private CourseDTO course;
 
     private UniversityDTO university;
@@ -34,6 +36,14 @@ public class PicturesDTO implements Serializable {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public CourseDTO getCourse() {
@@ -87,6 +97,7 @@ public class PicturesDTO implements Serializable {
         return "PicturesDTO{" +
             "id=" + getId() +
             ", picture='" + getPicture() + "'" +
+            ", url='" + getUrl() + "'" +
             ", course=" + getCourse() +
             ", university=" + getUniversity() +
             ", portfolio=" + getPortfolio() +

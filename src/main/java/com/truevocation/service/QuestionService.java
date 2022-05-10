@@ -48,10 +48,6 @@ public interface QuestionService {
      */
     Page<QuestionDTO> findAllWithEagerRelationships(Pageable pageable);
 
-    Page<QuestionDTO> findAllWithEagerRelationships(Pageable pageable, Long testId);
-
-    int findAllCountByTestId(Long testId);
-
     /**
      * Get the "id" question.
      *

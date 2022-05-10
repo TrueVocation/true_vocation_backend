@@ -34,6 +34,9 @@ class PicturesResourceIT {
     private static final String DEFAULT_PICTURE = "AAAAAAAAAA";
     private static final String UPDATED_PICTURE = "BBBBBBBBBB";
 
+    private static final String DEFAULT_URL = "AAAAAAAAAA";
+    private static final String UPDATED_URL = "BBBBBBBBBB";
+
     private static final String ENTITY_API_URL = "/api/pictures";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -61,7 +64,7 @@ class PicturesResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Pictures createEntity(EntityManager em) {
-        Pictures pictures = new Pictures().picture(DEFAULT_PICTURE);
+        Pictures pictures = new Pictures().picture(DEFAULT_PICTURE).url(DEFAULT_URL);
         return pictures;
     }
 
@@ -72,7 +75,7 @@ class PicturesResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Pictures createUpdatedEntity(EntityManager em) {
-        Pictures pictures = new Pictures().picture(UPDATED_PICTURE);
+        Pictures pictures = new Pictures().picture(UPDATED_PICTURE).url(UPDATED_URL);
         return pictures;
     }
 
@@ -96,6 +99,7 @@ class PicturesResourceIT {
         assertThat(picturesList).hasSize(databaseSizeBeforeCreate + 1);
         Pictures testPictures = picturesList.get(picturesList.size() - 1);
         assertThat(testPictures.getPicture()).isEqualTo(DEFAULT_PICTURE);
+        assertThat(testPictures.getUrl()).isEqualTo(DEFAULT_URL);
     }
 
     @Test
@@ -129,7 +133,8 @@ class PicturesResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(pictures.getId().intValue())))
-            .andExpect(jsonPath("$.[*].picture").value(hasItem(DEFAULT_PICTURE)));
+            .andExpect(jsonPath("$.[*].picture").value(hasItem(DEFAULT_PICTURE)))
+            .andExpect(jsonPath("$.[*].url").value(hasItem(DEFAULT_URL)));
     }
 
     @Test
@@ -144,7 +149,8 @@ class PicturesResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(pictures.getId().intValue()))
-            .andExpect(jsonPath("$.picture").value(DEFAULT_PICTURE));
+            .andExpect(jsonPath("$.picture").value(DEFAULT_PICTURE))
+            .andExpect(jsonPath("$.url").value(DEFAULT_URL));
     }
 
     @Test
@@ -166,7 +172,7 @@ class PicturesResourceIT {
         Pictures updatedPictures = picturesRepository.findById(pictures.getId()).get();
         // Disconnect from session so that the updates on updatedPictures are not directly saved in db
         em.detach(updatedPictures);
-        updatedPictures.picture(UPDATED_PICTURE);
+        updatedPictures.picture(UPDATED_PICTURE).url(UPDATED_URL);
         PicturesDTO picturesDTO = picturesMapper.toDto(updatedPictures);
 
         restPicturesMockMvc
@@ -182,6 +188,7 @@ class PicturesResourceIT {
         assertThat(picturesList).hasSize(databaseSizeBeforeUpdate);
         Pictures testPictures = picturesList.get(picturesList.size() - 1);
         assertThat(testPictures.getPicture()).isEqualTo(UPDATED_PICTURE);
+        assertThat(testPictures.getUrl()).isEqualTo(UPDATED_URL);
     }
 
     @Test
@@ -276,6 +283,7 @@ class PicturesResourceIT {
         assertThat(picturesList).hasSize(databaseSizeBeforeUpdate);
         Pictures testPictures = picturesList.get(picturesList.size() - 1);
         assertThat(testPictures.getPicture()).isEqualTo(UPDATED_PICTURE);
+        assertThat(testPictures.getUrl()).isEqualTo(DEFAULT_URL);
     }
 
     @Test
@@ -290,7 +298,7 @@ class PicturesResourceIT {
         Pictures partialUpdatedPictures = new Pictures();
         partialUpdatedPictures.setId(pictures.getId());
 
-        partialUpdatedPictures.picture(UPDATED_PICTURE);
+        partialUpdatedPictures.picture(UPDATED_PICTURE).url(UPDATED_URL);
 
         restPicturesMockMvc
             .perform(
@@ -305,6 +313,7 @@ class PicturesResourceIT {
         assertThat(picturesList).hasSize(databaseSizeBeforeUpdate);
         Pictures testPictures = picturesList.get(picturesList.size() - 1);
         assertThat(testPictures.getPicture()).isEqualTo(UPDATED_PICTURE);
+        assertThat(testPictures.getUrl()).isEqualTo(UPDATED_URL);
     }
 
     @Test

@@ -3,11 +3,7 @@ package com.truevocation.service;
 import com.truevocation.service.dto.PicturesDTO;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Optional;
-
-import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;

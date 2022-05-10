@@ -146,6 +146,7 @@ entity AppUser {
 
 entity Pictures {
   picture String maxlength(1000)
+  url String
 }
 
 

@@ -173,7 +173,8 @@ public class PicturesServiceImpl implements PicturesService {
                 byte[] bytes = file.getBytes();
                 Path path = Paths.get(uploadPathPicutre + picName + extension);
                 Files.write(path, bytes);
-                pictures.setPicture(picName);
+                pictures.setPicture(path.getFileName().toString());
+                pictures.setUrl(picName);
 
                 pictures = this.save(pictures);
                 return pictures;
@@ -188,7 +189,7 @@ public class PicturesServiceImpl implements PicturesService {
 
     @Override
     public byte[] getPictureByUrl(String url) throws IOException {
-        Pictures pictures = picturesRepository.findByPictureEquals(url);
+        Pictures pictures = picturesRepository.findByUrlEquals(url);
         String[] pictureSplit = pictures.getPicture().split("\\.");
         url = pictureSplit[0];
         String extension = pictureSplit[1];

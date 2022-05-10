@@ -220,5 +220,5 @@ file:
     viewPath: static/avatars/
     defaultPicture: default.jpg
   picture:
-    uploadPath: src/main/resources/static/pictures/
+    uploadPath: target/classes/static/pictures/
     viewPath: static/pictures/

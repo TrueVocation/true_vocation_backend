@@ -69,14 +69,6 @@ public class QuestionServiceImpl implements QuestionService {
         return questionRepository.findAllWithEagerRelationships(pageable).map(questionMapper::toDto);
     }
 
-    public Page<QuestionDTO> findAllWithEagerRelationships(Pageable pageable,Long testId) {
-        return questionRepository.findAllWithEagerRelationships(pageable,testId).map(questionMapper::toDto);
-    }
-
-    public int findAllCountByTestId(Long testId) {
-        return questionRepository.findAllTestQuestionsCount(testId);
-    }
-
     /**
      *  Get all the questions where AnswerUser is {@code null}.
      *  @return the list of entities.
