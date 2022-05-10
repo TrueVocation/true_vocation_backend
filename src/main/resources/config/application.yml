@@ -213,3 +213,12 @@ jhipster:
 
 truevocation:
   is-production: true
+
+file:
+  avatar:
+    uploadPath: target/classes/static/avatars/
+    viewPath: static/avatars/
+    defaultPicture: default.jpg
+  picture:
+    uploadPath: src/main/resources/static/pictures/
+    viewPath: static/pictures/

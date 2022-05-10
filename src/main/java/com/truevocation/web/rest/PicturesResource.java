@@ -1,25 +1,54 @@
 package com.truevocation.web.rest;
 
+import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.digest.DigestUtils;
+import com.truevocation.domain.Course;
+import com.truevocation.domain.Pictures;
+import com.truevocation.domain.Portfolio;
+import com.truevocation.domain.University;
 import com.truevocation.repository.PicturesRepository;
+import com.truevocation.service.CourseService;
 import com.truevocation.service.PicturesService;
+import com.truevocation.service.PortfolioService;
+import com.truevocation.service.UniversityService;
+import com.truevocation.service.dto.CourseDTO;
 import com.truevocation.service.dto.PicturesDTO;
+import com.truevocation.service.dto.PortfolioDTO;
+import com.truevocation.service.dto.UniversityDTO;
+import com.truevocation.service.mapper.CourseMapper;
+import com.truevocation.service.mapper.PortfolioMapper;
+import com.truevocation.service.mapper.UniversityMapper;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.web.PortMapper;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -47,6 +76,28 @@ public class PicturesResource {
         this.picturesService = picturesService;
         this.picturesRepository = picturesRepository;
     }
+
+
+    @PostMapping(value = "/uploadPicture")
+//    @PreAuthorize("hasRole(ROLE_ADMIN)")
+    public ResponseEntity<PicturesDTO> uploadPicture(@RequestParam(name = "picture") MultipartFile file,
+                                @RequestParam(name = "source_Id")Long sourceId,
+                                @RequestParam(name = "source_type")String sourceType){
+        PicturesDTO picturesDTO = picturesService.savePicture(file, sourceId, sourceType);
+        if(!Objects.isNull(picturesDTO)){
+            return ResponseEntity.ok(picturesDTO);
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+
+
+    @GetMapping(value = "/viewPicture",produces = {MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE})
+    @PreAuthorize("isAnonymous() || isAuthenticated()")
+    public @ResponseBody byte[] viewItemPicture(@RequestParam(name = "url")String url) throws IOException {
+        return picturesService.getPictureByUrl(url);
+    }
+
 
     /**
      * {@code POST  /pictures} : Create a new pictures.
