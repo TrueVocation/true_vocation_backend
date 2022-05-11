@@ -50,6 +50,9 @@ public class University implements Serializable {
     @Column(name = "logo")
     private String logo;
 
+    @Column(name = "short_name")
+    private String shortName;
+
     @OneToMany(mappedBy = "university")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "course", "university", "portfolio" }, allowSetters = true)
@@ -201,6 +204,19 @@ public class University implements Serializable {
 
     public void setLogo(String logo) {
         this.logo = logo;
+    }
+
+    public String getShortName() {
+        return this.shortName;
+    }
+
+    public University shortName(String shortName) {
+        this.setShortName(shortName);
+        return this;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
     }
 
     public Set<Contact> getContacts() {
@@ -397,6 +413,7 @@ public class University implements Serializable {
             ", status='" + getStatus() + "'" +
             ", code='" + getCode() + "'" +
             ", logo='" + getLogo() + "'" +
+            ", shortName='" + getShortName() + "'" +
             "}";
     }
 }

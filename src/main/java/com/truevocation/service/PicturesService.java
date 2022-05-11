@@ -1,12 +1,9 @@
 package com.truevocation.service;
 
 import com.truevocation.service.dto.PicturesDTO;
-
-import java.io.IOException;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Service Interface for managing {@link com.truevocation.domain.Pictures}.
@@ -50,8 +47,4 @@ public interface PicturesService {
      * @param id the id of the entity.
      */
     void delete(Long id);
-
-    PicturesDTO savePicture(MultipartFile file, Long sourceId, String sourceType);
-
-    byte[] getPictureByUrl(String url) throws IOException;
 }

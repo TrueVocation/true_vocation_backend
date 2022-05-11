@@ -64,6 +64,9 @@ class UniversityResourceIT {
     private static final String DEFAULT_LOGO = "AAAAAAAAAA";
     private static final String UPDATED_LOGO = "BBBBBBBBBB";
 
+    private static final String DEFAULT_SHORT_NAME = "AAAAAAAAAA";
+    private static final String UPDATED_SHORT_NAME = "BBBBBBBBBB";
+
     private static final String ENTITY_API_URL = "/api/universities";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -105,7 +108,8 @@ class UniversityResourceIT {
             .military(DEFAULT_MILITARY)
             .status(DEFAULT_STATUS)
             .code(DEFAULT_CODE)
-            .logo(DEFAULT_LOGO);
+            .logo(DEFAULT_LOGO)
+            .shortName(DEFAULT_SHORT_NAME);
         return university;
     }
 
@@ -124,7 +128,8 @@ class UniversityResourceIT {
             .military(UPDATED_MILITARY)
             .status(UPDATED_STATUS)
             .code(UPDATED_CODE)
-            .logo(UPDATED_LOGO);
+            .logo(UPDATED_LOGO)
+            .shortName(UPDATED_SHORT_NAME);
         return university;
     }
 
@@ -155,6 +160,7 @@ class UniversityResourceIT {
         assertThat(testUniversity.getStatus()).isEqualTo(DEFAULT_STATUS);
         assertThat(testUniversity.getCode()).isEqualTo(DEFAULT_CODE);
         assertThat(testUniversity.getLogo()).isEqualTo(DEFAULT_LOGO);
+        assertThat(testUniversity.getShortName()).isEqualTo(DEFAULT_SHORT_NAME);
     }
 
     @Test
@@ -195,7 +201,8 @@ class UniversityResourceIT {
             .andExpect(jsonPath("$.[*].military").value(hasItem(DEFAULT_MILITARY.booleanValue())))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS)))
             .andExpect(jsonPath("$.[*].code").value(hasItem(DEFAULT_CODE)))
-            .andExpect(jsonPath("$.[*].logo").value(hasItem(DEFAULT_LOGO)));
+            .andExpect(jsonPath("$.[*].logo").value(hasItem(DEFAULT_LOGO)))
+            .andExpect(jsonPath("$.[*].shortName").value(hasItem(DEFAULT_SHORT_NAME)));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -235,7 +242,8 @@ class UniversityResourceIT {
             .andExpect(jsonPath("$.military").value(DEFAULT_MILITARY.booleanValue()))
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS))
             .andExpect(jsonPath("$.code").value(DEFAULT_CODE))
-            .andExpect(jsonPath("$.logo").value(DEFAULT_LOGO));
+            .andExpect(jsonPath("$.logo").value(DEFAULT_LOGO))
+            .andExpect(jsonPath("$.shortName").value(DEFAULT_SHORT_NAME));
     }
 
     @Test
@@ -265,7 +273,8 @@ class UniversityResourceIT {
             .military(UPDATED_MILITARY)
             .status(UPDATED_STATUS)
             .code(UPDATED_CODE)
-            .logo(UPDATED_LOGO);
+            .logo(UPDATED_LOGO)
+            .shortName(UPDATED_SHORT_NAME);
         UniversityDTO universityDTO = universityMapper.toDto(updatedUniversity);
 
         restUniversityMockMvc
@@ -288,6 +297,7 @@ class UniversityResourceIT {
         assertThat(testUniversity.getStatus()).isEqualTo(UPDATED_STATUS);
         assertThat(testUniversity.getCode()).isEqualTo(UPDATED_CODE);
         assertThat(testUniversity.getLogo()).isEqualTo(UPDATED_LOGO);
+        assertThat(testUniversity.getShortName()).isEqualTo(UPDATED_SHORT_NAME);
     }
 
     @Test
@@ -367,7 +377,12 @@ class UniversityResourceIT {
         University partialUpdatedUniversity = new University();
         partialUpdatedUniversity.setId(university.getId());
 
-        partialUpdatedUniversity.address(UPDATED_ADDRESS).military(UPDATED_MILITARY).status(UPDATED_STATUS).code(UPDATED_CODE);
+        partialUpdatedUniversity
+            .address(UPDATED_ADDRESS)
+            .military(UPDATED_MILITARY)
+            .status(UPDATED_STATUS)
+            .code(UPDATED_CODE)
+            .shortName(UPDATED_SHORT_NAME);
 
         restUniversityMockMvc
             .perform(
@@ -389,6 +404,7 @@ class UniversityResourceIT {
         assertThat(testUniversity.getStatus()).isEqualTo(UPDATED_STATUS);
         assertThat(testUniversity.getCode()).isEqualTo(UPDATED_CODE);
         assertThat(testUniversity.getLogo()).isEqualTo(DEFAULT_LOGO);
+        assertThat(testUniversity.getShortName()).isEqualTo(UPDATED_SHORT_NAME);
     }
 
     @Test
@@ -411,7 +427,8 @@ class UniversityResourceIT {
             .military(UPDATED_MILITARY)
             .status(UPDATED_STATUS)
             .code(UPDATED_CODE)
-            .logo(UPDATED_LOGO);
+            .logo(UPDATED_LOGO)
+            .shortName(UPDATED_SHORT_NAME);
 
         restUniversityMockMvc
             .perform(
@@ -433,6 +450,7 @@ class UniversityResourceIT {
         assertThat(testUniversity.getStatus()).isEqualTo(UPDATED_STATUS);
         assertThat(testUniversity.getCode()).isEqualTo(UPDATED_CODE);
         assertThat(testUniversity.getLogo()).isEqualTo(UPDATED_LOGO);
+        assertThat(testUniversity.getShortName()).isEqualTo(UPDATED_SHORT_NAME);
     }
 
     @Test

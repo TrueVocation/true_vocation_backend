@@ -9,6 +9,4 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface PicturesRepository extends JpaRepository<Pictures, Long> {
-    Pictures findByUrlEquals(String pictureUrl);
-}
+public interface PicturesRepository extends JpaRepository<Pictures, Long> {}

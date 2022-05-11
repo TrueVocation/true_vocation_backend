@@ -30,6 +30,8 @@ public class UniversityDTO implements Serializable {
 
     private String logo;
 
+    private String shortName;
+
     private Set<FacultyDTO> faculties = new HashSet<>();
 
     private CityDTO city;
@@ -106,6 +108,14 @@ public class UniversityDTO implements Serializable {
         this.logo = logo;
     }
 
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
+    }
+
     public Set<FacultyDTO> getFaculties() {
         return faculties;
     }
@@ -156,6 +166,7 @@ public class UniversityDTO implements Serializable {
             ", status='" + getStatus() + "'" +
             ", code='" + getCode() + "'" +
             ", logo='" + getLogo() + "'" +
+            ", shortName='" + getShortName() + "'" +
             ", faculties=" + getFaculties() +
             ", city=" + getCity() +
             "}";

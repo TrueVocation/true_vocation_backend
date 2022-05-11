@@ -4,8 +4,6 @@ import com.truevocation.repository.PicturesRepository;
 import com.truevocation.service.PicturesService;
 import com.truevocation.service.dto.PicturesDTO;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
-
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -20,11 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -52,28 +47,6 @@ public class PicturesResource {
         this.picturesService = picturesService;
         this.picturesRepository = picturesRepository;
     }
-
-
-    @PostMapping(value = "/uploadPicture")
-//    @PreAuthorize("hasRole(ROLE_ADMIN)")
-    public ResponseEntity<PicturesDTO> uploadPicture(@RequestParam(name = "picture") MultipartFile file,
-                                @RequestParam(name = "source_Id")Long sourceId,
-                                @RequestParam(name = "source_type")String sourceType){
-        PicturesDTO picturesDTO = picturesService.savePicture(file, sourceId, sourceType);
-        if(!Objects.isNull(picturesDTO)){
-            return ResponseEntity.ok(picturesDTO);
-        }
-        return ResponseEntity.badRequest().build();
-    }
-
-
-
-    @GetMapping(value = "/viewPicture",produces = {MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE})
-    @PreAuthorize("isAnonymous() || isAuthenticated()")
-    public @ResponseBody byte[] viewItemPicture(@RequestParam(name = "url")String url) throws IOException {
-        return picturesService.getPictureByUrl(url);
-    }
-
 
     /**
      * {@code POST  /pictures} : Create a new pictures.
