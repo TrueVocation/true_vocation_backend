@@ -1,9 +1,15 @@
 package com.truevocation.service;
 
+import com.truevocation.service.dto.PicturesDTO;
 import com.truevocation.service.dto.UniversityDTO;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Service Interface for managing {@link com.truevocation.domain.University}.
@@ -55,4 +61,8 @@ public interface UniversityService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    UniversityDTO saveLogo(MultipartFile file, Long universityId);
+
+    ResponseEntity<byte[]> getLogoByUrl(String url) throws IOException;
 }

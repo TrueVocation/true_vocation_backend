@@ -7,22 +7,19 @@ import com.truevocation.service.CourseService;
 import com.truevocation.service.PicturesService;
 import com.truevocation.service.PortfolioService;
 import com.truevocation.service.UniversityService;
-import com.truevocation.service.dto.CourseDTO;
-import com.truevocation.service.dto.PicturesDTO;
-import com.truevocation.service.dto.PortfolioDTO;
-import com.truevocation.service.dto.UniversityDTO;
+import com.truevocation.service.dto.*;
 import com.truevocation.service.mapper.CourseMapper;
 import com.truevocation.service.mapper.PicturesMapper;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import com.truevocation.service.mapper.PortfolioMapper;
 import com.truevocation.service.mapper.UniversityMapper;
@@ -34,6 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -87,11 +85,9 @@ public class PicturesServiceImpl implements PicturesService {
     private String defaultPicture;
 
 
-
     private static final String COURSE_PICTURE = "course";
     private static final String UNIVERSITY_PICTURE = "university";
     private static final String PORTFOLIO_PICTURE = "portfolio";
-
 
 
     public PicturesServiceImpl(PicturesRepository picturesRepository, PicturesMapper picturesMapper) {
@@ -144,7 +140,7 @@ public class PicturesServiceImpl implements PicturesService {
 
     @Override
     public PicturesDTO savePicture(MultipartFile file, Long sourceId, String sourceType) {
-        if(Objects.equals(file.getContentType(), "image/jpeg") || Objects.equals(file.getContentType(), "image/png")) {
+        if (Objects.equals(file.getContentType(), "image/jpeg") || Objects.equals(file.getContentType(), "image/png")) {
             String extension;
             if ("image/jpeg".equals(file.getContentType())) {
                 extension = ".jpg";
@@ -153,7 +149,7 @@ public class PicturesServiceImpl implements PicturesService {
             }
             try {
                 PicturesDTO pictures = new PicturesDTO();
-                switch (sourceType){
+                switch (sourceType) {
                     case COURSE_PICTURE:
                         CourseDTO course = courseService.findOne(sourceId).orElse(null);
                         pictures.setCourse(course);
@@ -173,7 +169,7 @@ public class PicturesServiceImpl implements PicturesService {
                 byte[] bytes = file.getBytes();
                 Path path = Paths.get(uploadPathPicutre + picName + extension);
                 Files.write(path, bytes);
-                pictures.setPicture(picName);
+                pictures.setPicture(path.getFileName().toString());
 
                 pictures = this.save(pictures);
                 return pictures;
@@ -187,28 +183,40 @@ public class PicturesServiceImpl implements PicturesService {
 
 
     @Override
-    public byte[] getPictureByUrl(String url) throws IOException {
+    public ResponseEntity<byte[]> getPictureByUrl(String url) throws IOException, URISyntaxException {
         Pictures pictures = picturesRepository.findByPictureEquals(url);
-        String[] pictureSplit = pictures.getPicture().split("\\.");
-        url = pictureSplit[0];
-        String extension = pictureSplit[1];
-        String pictureURL = viewPath+defaultPicture;
-        if(url!=null && !url.equals("null")){
-            pictureURL = viewPathPicture+url+"."+extension;
+        String extension = "";
+        if (pictures.getPicture() != null && (pictures.getPicture().contains(".jpg") || pictures.getPicture().contains(".png"))){
+            String[] pictureSplit = pictures.getPicture().split("\\.");
+            url = pictureSplit[0];
+            extension = pictureSplit[1];
         }
-
-
+        String pictureURL = viewPathPicture + defaultPicture;
+        if (url != null && !url.equals("null")) {
+            pictureURL = viewPathPicture + url + "." + extension;
+        }
 
         InputStream in;
-        try{
-            ClassPathResource resource = new ClassPathResource(pictureURL);
-            in = resource.getInputStream();
-        }catch (Exception e){
-            ClassPathResource resource = new ClassPathResource(viewPath+defaultPicture);
-            in = resource.getInputStream();
+        try {
+            in = new FileInputStream(pictureURL);
+        } catch (Exception e) {
+
+            in = new FileInputStream(viewPath + defaultPicture);
+            extension = "png";
             e.printStackTrace();
         }
+        String contentType = defineContentType(extension);
+        byte[] content = Base64.getEncoder().encode(IOUtils.toByteArray(in));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, contentType);
+        return ResponseEntity.ok().headers(headers).body(content);
+    }
 
-        return IOUtils.toByteArray(in);
+    public String defineContentType(String extension) {
+        if (extension.equals("jpg")) {
+            return "image/jpeg";
+        } else {
+            return "image/png";
+        }
     }
 }

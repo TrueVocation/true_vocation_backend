@@ -219,6 +219,10 @@ file:
     uploadPath: target/classes/static/avatars/
     viewPath: static/avatars/
     defaultPicture: default.jpg
+  university:
+    uploadPath: src/main/resources/static/university/
+    viewPath: src/main/resources/static/university/
+    defaultPicture: default.png
   picture:
     uploadPath: src/main/resources/static/pictures/
-    viewPath: static/pictures/
+    viewPath: src/main/resources/static/pictures/

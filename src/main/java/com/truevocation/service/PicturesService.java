@@ -3,13 +3,12 @@ package com.truevocation.service;
 import com.truevocation.service.dto.PicturesDTO;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.Optional;
 
-import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -57,5 +56,5 @@ public interface PicturesService {
 
     PicturesDTO savePicture(MultipartFile file, Long sourceId, String sourceType);
 
-    byte[] getPictureByUrl(String url) throws IOException;
+    ResponseEntity<byte[]> getPictureByUrl(String url) throws IOException, URISyntaxException;
 }

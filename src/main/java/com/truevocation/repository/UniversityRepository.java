@@ -25,4 +25,6 @@ public interface UniversityRepository extends JpaRepository<University, Long> {
 
     @Query("select university from University university left join fetch university.faculties where university.id =:id")
     Optional<University> findOneWithEagerRelationships(@Param("id") Long id);
+
+    University findByLogoEquals(String logoUrl);
 }

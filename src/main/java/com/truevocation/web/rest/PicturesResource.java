@@ -1,44 +1,27 @@
 package com.truevocation.web.rest;
 
-import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.digest.DigestUtils;
-import com.truevocation.domain.Course;
-import com.truevocation.domain.Pictures;
-import com.truevocation.domain.Portfolio;
-import com.truevocation.domain.University;
 import com.truevocation.repository.PicturesRepository;
-import com.truevocation.service.CourseService;
 import com.truevocation.service.PicturesService;
 import com.truevocation.service.PortfolioService;
 import com.truevocation.service.UniversityService;
-import com.truevocation.service.dto.CourseDTO;
-import com.truevocation.service.dto.PicturesDTO;
-import com.truevocation.service.dto.PortfolioDTO;
-import com.truevocation.service.dto.UniversityDTO;
+import com.truevocation.service.dto.*;
 import com.truevocation.service.mapper.CourseMapper;
 import com.truevocation.service.mapper.PortfolioMapper;
 import com.truevocation.service.mapper.UniversityMapper;
+import com.truevocation.service.dto.PicturesDTO;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -46,7 +29,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.web.PortMapper;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -94,7 +76,7 @@ public class PicturesResource {
 
     @GetMapping(value = "/viewPicture",produces = {MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE})
     @PreAuthorize("isAnonymous() || isAuthenticated()")
-    public @ResponseBody byte[] viewItemPicture(@RequestParam(name = "url")String url) throws IOException {
+    public ResponseEntity<byte[]> viewItemPicture(@RequestParam(name = "url")String url) throws IOException, URISyntaxException {
         return picturesService.getPictureByUrl(url);
     }
 
