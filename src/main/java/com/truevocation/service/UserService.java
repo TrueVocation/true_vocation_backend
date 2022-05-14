@@ -1,28 +1,46 @@
 package com.truevocation.service;
 
+import com.github.dockerjava.api.exception.InternalServerErrorException;
 import com.truevocation.config.Constants;
 import com.truevocation.domain.Authority;
+import com.truevocation.domain.University;
 import com.truevocation.domain.User;
 import com.truevocation.repository.AuthorityRepository;
 import com.truevocation.repository.UserRepository;
 import com.truevocation.security.AuthoritiesConstants;
 import com.truevocation.security.SecurityUtils;
 import com.truevocation.service.dto.AdminUserDTO;
+import com.truevocation.service.dto.UniversityDTO;
 import com.truevocation.service.dto.UserDTO;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import tech.jhipster.security.RandomUtil;
+
+import javax.persistence.EntityNotFoundException;
 
 /**
  * Service class for managing users.
@@ -40,6 +58,15 @@ public class UserService {
     private final AuthorityRepository authorityRepository;
 
     private final CacheManager cacheManager;
+
+    @Value("${file.avatar.viewPath}")
+    private String viewPathAvatar;
+
+    @Value("${file.avatar.uploadPath}")
+    private String uploadPathAvatar;
+
+    @Value("${file.avatar.defaultPicture}")
+    private String defaultPicture;
 
     public UserService(
         UserRepository userRepository,
@@ -321,6 +348,72 @@ public class UserService {
         Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)).evict(user.getLogin());
         if (user.getEmail() != null) {
             Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evict(user.getEmail());
+        }
+    }
+
+
+    public User saveAvatar(MultipartFile file, Long id) {
+        if(Objects.equals(file.getContentType(), "image/jpeg") || Objects.equals(file.getContentType(), "image/png")) {
+            String extension;
+            if ("image/jpeg".equals(file.getContentType())) {
+                extension = ".jpg";
+            } else {
+                extension = ".png";
+            }
+            try {
+                User user = userRepository.getById(id);
+
+                String picName = UUID.randomUUID().toString();
+
+                byte[] bytes = file.getBytes();
+                Path path = Paths.get(uploadPathAvatar + picName + extension);
+                Files.write(path, bytes);
+                user.setImageUrl(path.getFileName().toString());
+
+                user = userRepository.save(user);
+                return user;
+            } catch (Exception e) {
+                log.error("Error when save picture");
+                throw new InternalServerErrorException("Error when save picture");
+            }
+        }
+        return null;
+    }
+
+
+    public ResponseEntity<byte[]> getAvatar(Long id, String url) throws IOException {
+        User user = userRepository.getById(id);
+        String extension = "";
+        if (user.getImageUrl() != null && (user.getImageUrl().contains(".jpg") || user.getImageUrl().contains(".png"))){
+            String[] pictureSplit = user.getImageUrl().split("\\.");
+            url = pictureSplit[0];
+            extension = pictureSplit[1];
+        }
+        String pictureURL = viewPathAvatar+defaultPicture;
+        if(url!=null && !url.equals("null")){
+            pictureURL = viewPathAvatar+url+"."+extension;
+        }
+
+        InputStream in;
+        try{
+            in = new FileInputStream(pictureURL);
+        }catch (Exception e){
+            in = new FileInputStream(viewPathAvatar+defaultPicture);
+            extension = "png";
+            e.printStackTrace();
+        }
+        String contentType = defineContentType(extension);
+        byte[] content = Base64.getEncoder().encode(IOUtils.toByteArray(in));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, contentType);
+        return ResponseEntity.ok().headers(headers).body(content);
+    }
+
+    public String defineContentType(String extension){
+        if(extension.equals("jpg")){
+            return "image/jpeg";
+        }else {
+            return "image/png";
         }
     }
 }

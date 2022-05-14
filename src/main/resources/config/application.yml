@@ -216,9 +216,9 @@ truevocation:
 
 file:
   avatar:
-    uploadPath: target/classes/static/avatars/
-    viewPath: static/avatars/
-    defaultPicture: default.jpg
+    uploadPath: src/main/resources/static/avatars/
+    viewPath: src/main/resources/static/avatars/
+    defaultPicture: default.png
   university:
     uploadPath: src/main/resources/static/university/
     viewPath: src/main/resources/static/university/

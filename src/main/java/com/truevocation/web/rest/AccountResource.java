@@ -7,18 +7,27 @@ import com.truevocation.service.MailService;
 import com.truevocation.service.UserService;
 import com.truevocation.service.dto.AdminUserDTO;
 import com.truevocation.service.dto.PasswordChangeDTO;
+import com.truevocation.service.dto.UniversityDTO;
+import com.truevocation.service.dto.UserDTO;
 import com.truevocation.web.rest.errors.*;
 import com.truevocation.web.rest.vm.KeyAndPasswordVM;
 import com.truevocation.web.rest.vm.ManagedUserVM;
+
+import java.io.IOException;
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
@@ -31,9 +40,9 @@ public class AccountResource {
     @Value("${truevocation.is-production}")
     private boolean isProduction;
 
-    private static final  String CLIENT_URL_LOCALHOST = "http://localhost:9000/login";
+    private static final String CLIENT_URL_LOCALHOST = "http://localhost:9000/login";
 
-    private static final  String CLIENT_URL_PRODUCTION = "http://localhost:9000";
+    private static final String CLIENT_URL_PRODUCTION = "http://localhost:9000";
 
     private static class AccountResourceException extends RuntimeException {
 
@@ -60,7 +69,7 @@ public class AccountResource {
      * {@code POST  /register} : register the user.
      *
      * @param managedUserVM the managed user View Model.
-     * @throws InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
+     * @throws InvalidPasswordException  {@code 400 (Bad Request)} if the password is incorrect.
      * @throws EmailAlreadyUsedException {@code 400 (Bad Request)} if the email is already used.
      * @throws LoginAlreadyUsedException {@code 400 (Bad Request)} if the login is already used.
      */
@@ -121,7 +130,7 @@ public class AccountResource {
      *
      * @param userDTO the current user information.
      * @throws EmailAlreadyUsedException {@code 400 (Bad Request)} if the email is already used.
-     * @throws RuntimeException {@code 500 (Internal Server Error)} if the user login wasn't found.
+     * @throws RuntimeException          {@code 500 (Internal Server Error)} if the user login wasn't found.
      */
     @PostMapping
     public void saveAccount(@Valid @RequestBody AdminUserDTO userDTO) {
@@ -181,7 +190,7 @@ public class AccountResource {
      *
      * @param keyAndPassword the generated key and the new password.
      * @throws InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
-     * @throws RuntimeException {@code 500 (Internal Server Error)} if the password could not be reset.
+     * @throws RuntimeException         {@code 500 (Internal Server Error)} if the password could not be reset.
      */
     @PostMapping(path = "/reset-password/finish")
     public void finishPasswordReset(@RequestBody KeyAndPasswordVM keyAndPassword) {
@@ -198,8 +207,28 @@ public class AccountResource {
     private static boolean isPasswordLengthInvalid(String password) {
         return (
             StringUtils.isEmpty(password) ||
-            password.length() < ManagedUserVM.PASSWORD_MIN_LENGTH ||
-            password.length() > ManagedUserVM.PASSWORD_MAX_LENGTH
+                password.length() < ManagedUserVM.PASSWORD_MIN_LENGTH ||
+                password.length() > ManagedUserVM.PASSWORD_MAX_LENGTH
         );
+    }
+
+
+    @PostMapping(value = "/uploadAvatar/{id}")
+//    @PreAuthorize("hasRole(ROLE_ADMIN)")
+    public ResponseEntity<User> uploadPicture(@RequestParam(name = "picture") MultipartFile file,
+                                              @PathVariable(name = "id") Long id) {
+        User user = userService.saveAvatar(file, id);
+        if (!Objects.isNull(user)) {
+            return ResponseEntity.ok(user);
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+
+    @GetMapping(value = "/viewAvatar/{id}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+    @PreAuthorize("isAnonymous() || isAuthenticated()")
+    public ResponseEntity<byte[]> viewItemPicture(@PathVariable("id") Long id,
+                                                  @RequestParam(name = "url") String url) throws IOException {
+        return userService.getAvatar(id, url);
     }
 }

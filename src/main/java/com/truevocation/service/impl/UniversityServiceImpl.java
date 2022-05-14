@@ -54,7 +54,7 @@ public class UniversityServiceImpl implements UniversityService {
     private String viewPathPicture;
 
     @Value("${file.university.uploadPath}")
-    private String uploadPathPicutre;
+    private String uploadPathPicture;
 
     @Value("${file.university.defaultPicture}")
     private String defaultPicture;
@@ -129,7 +129,7 @@ public class UniversityServiceImpl implements UniversityService {
                 String picName = UUID.randomUUID().toString();
 
                 byte[] bytes = file.getBytes();
-                Path path = Paths.get(uploadPathPicutre + picName + extension);
+                Path path = Paths.get(uploadPathPicture + picName + extension);
                 Files.write(path, bytes);
                 universityDTO.setLogo(path.getFileName().toString());
 

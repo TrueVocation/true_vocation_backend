@@ -7,20 +7,12 @@ import com.truevocation.service.CourseService;
 import com.truevocation.service.PicturesService;
 import com.truevocation.service.PortfolioService;
 import com.truevocation.service.UniversityService;
-import com.truevocation.service.dto.*;
+import com.truevocation.service.dto.CourseDTO;
+import com.truevocation.service.dto.PicturesDTO;
+import com.truevocation.service.dto.PortfolioDTO;
+import com.truevocation.service.dto.UniversityDTO;
 import com.truevocation.service.mapper.CourseMapper;
 import com.truevocation.service.mapper.PicturesMapper;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-
 import com.truevocation.service.mapper.PortfolioMapper;
 import com.truevocation.service.mapper.UniversityMapper;
 import org.apache.commons.io.IOUtils;
@@ -28,15 +20,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Implementation for managing {@link Pictures}.
@@ -69,17 +71,11 @@ public class PicturesServiceImpl implements PicturesService {
     @Autowired
     private PortfolioMapper portfolioMapper;
 
-    @Value("${file.avatar.viewPath}")
-    private String viewPath;
-
-    @Value("${file.avatar.uploadPath}")
-    private String uploadPath;
-
     @Value("${file.picture.viewPath}")
     private String viewPathPicture;
 
     @Value("${file.picture.uploadPath}")
-    private String uploadPathPicutre;
+    private String uploadPathPicture;
 
     @Value("${file.avatar.defaultPicture}")
     private String defaultPicture;
@@ -167,7 +163,7 @@ public class PicturesServiceImpl implements PicturesService {
                 String picName = UUID.randomUUID().toString();
 
                 byte[] bytes = file.getBytes();
-                Path path = Paths.get(uploadPathPicutre + picName + extension);
+                Path path = Paths.get(uploadPathPicture + picName + extension);
                 Files.write(path, bytes);
                 pictures.setPicture(path.getFileName().toString());
 
@@ -186,7 +182,7 @@ public class PicturesServiceImpl implements PicturesService {
     public ResponseEntity<byte[]> getPictureByUrl(String url) throws IOException, URISyntaxException {
         Pictures pictures = picturesRepository.findByPictureEquals(url);
         String extension = "";
-        if (pictures.getPicture() != null && (pictures.getPicture().contains(".jpg") || pictures.getPicture().contains(".png"))){
+        if (pictures.getPicture() != null && (pictures.getPicture().contains(".jpg") || pictures.getPicture().contains(".png"))) {
             String[] pictureSplit = pictures.getPicture().split("\\.");
             url = pictureSplit[0];
             extension = pictureSplit[1];
@@ -201,7 +197,7 @@ public class PicturesServiceImpl implements PicturesService {
             in = new FileInputStream(pictureURL);
         } catch (Exception e) {
 
-            in = new FileInputStream(viewPath + defaultPicture);
+            in = new FileInputStream(viewPathPicture + defaultPicture);
             extension = "png";
             e.printStackTrace();
         }
