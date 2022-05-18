@@ -5,6 +5,8 @@ import com.truevocation.repository.SpecialtyRepository;
 import com.truevocation.service.SpecialtyService;
 import com.truevocation.service.dto.SpecialtyDTO;
 import com.truevocation.service.mapper.SpecialtyMapper;
+
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,5 +78,11 @@ public class SpecialtyServiceImpl implements SpecialtyService {
     public void delete(Long id) {
         log.debug("Request to delete Specialty : {}", id);
         specialtyRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<List<Specialty>> findAllByFaculty(Long id) {
+        log.debug("Request to delete Specialty : {}", id);
+        return specialtyRepository.findAllByFaculty_Id(id);
     }
 }

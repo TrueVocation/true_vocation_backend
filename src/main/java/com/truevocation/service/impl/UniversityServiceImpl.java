@@ -1,32 +1,18 @@
 package com.truevocation.service.impl;
 
 import com.github.dockerjava.api.exception.InternalServerErrorException;
-import com.truevocation.domain.Pictures;
+import com.truevocation.domain.Specialty;
 import com.truevocation.domain.University;
 import com.truevocation.repository.UniversityRepository;
+import com.truevocation.service.SpecialtyService;
 import com.truevocation.service.UniversityService;
-import com.truevocation.service.dto.CourseDTO;
-import com.truevocation.service.dto.PicturesDTO;
-import com.truevocation.service.dto.PortfolioDTO;
+import com.truevocation.service.dto.FacultyDTO;
 import com.truevocation.service.dto.UniversityDTO;
 import com.truevocation.service.mapper.UniversityMapper;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Base64;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -36,6 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 /**
  * Service Implementation for managing {@link University}.
@@ -50,6 +43,8 @@ public class UniversityServiceImpl implements UniversityService {
 
     private final UniversityMapper universityMapper;
 
+    private final SpecialtyService specialtyService;
+
     @Value("${file.university.viewPath}")
     private String viewPathPicture;
 
@@ -59,9 +54,10 @@ public class UniversityServiceImpl implements UniversityService {
     @Value("${file.university.defaultPicture}")
     private String defaultPicture;
 
-    public UniversityServiceImpl(UniversityRepository universityRepository, UniversityMapper universityMapper) {
+    public UniversityServiceImpl(UniversityRepository universityRepository, UniversityMapper universityMapper, SpecialtyService specialtyService) {
         this.universityRepository = universityRepository;
         this.universityMapper = universityMapper;
+        this.specialtyService = specialtyService;
     }
 
     @Override
@@ -90,12 +86,23 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     @Transactional(readOnly = true)
     public Page<UniversityDTO> findAll(Pageable pageable) {
-        log.debug("Request to get all Universities");
-        return universityRepository.findAll(pageable).map(universityMapper::toDto);
+        Page<UniversityDTO> universityDTOS = universityRepository.findAll(pageable).map(universityMapper::toDto);
+        for (UniversityDTO u : universityDTOS) {
+            if (!u.getFaculties().isEmpty()){
+                u.setSpecialityCount(getSpeciality(u.getFaculties()));
+            }
+        }
+
+        return universityDTOS;
     }
 
     public Page<UniversityDTO> findAllWithEagerRelationships(Pageable pageable) {
-        return universityRepository.findAllWithEagerRelationships(pageable).map(universityMapper::toDto);
+        Page<UniversityDTO> universityDTOS = universityRepository.findAllWithEagerRelationships(pageable).map(universityMapper::toDto);
+        for (UniversityDTO u : universityDTOS) {
+            u.setSpecialityCount(getSpeciality(u.getFaculties()));
+        }
+
+        return universityDTOS;
     }
 
     @Override
@@ -113,7 +120,7 @@ public class UniversityServiceImpl implements UniversityService {
 
     @Override
     public UniversityDTO saveLogo(MultipartFile file, Long universityId) {
-        if(Objects.equals(file.getContentType(), "image/jpeg") || Objects.equals(file.getContentType(), "image/png")) {
+        if (Objects.equals(file.getContentType(), "image/jpeg") || Objects.equals(file.getContentType(), "image/png")) {
             String extension;
             if ("image/jpeg".equals(file.getContentType())) {
                 extension = ".jpg";
@@ -122,9 +129,9 @@ public class UniversityServiceImpl implements UniversityService {
             }
             try {
                 UniversityDTO universityDTO = this.findOne(universityId).orElse(null);
-               if(Objects.isNull(universityDTO)){
-                   throw new EntityNotFoundException("University entity not found");
-               }
+                if (Objects.isNull(universityDTO)) {
+                    throw new EntityNotFoundException("University entity not found");
+                }
 
                 String picName = UUID.randomUUID().toString();
 
@@ -147,21 +154,21 @@ public class UniversityServiceImpl implements UniversityService {
     public ResponseEntity<byte[]> getLogoByUrl(String url) throws IOException {
         University university = universityRepository.findByLogoEquals(url);
         String extension = "";
-        if (university.getLogo() != null && (university.getLogo().contains(".jpg") || university.getLogo().contains(".png"))){
+        if (university.getLogo() != null && (university.getLogo().contains(".jpg") || university.getLogo().contains(".png"))) {
             String[] pictureSplit = university.getLogo().split("\\.");
             url = pictureSplit[0];
             extension = pictureSplit[1];
         }
-        String pictureURL = viewPathPicture+defaultPicture;
-        if(url!=null && !url.equals("null")){
-            pictureURL = viewPathPicture+url+"."+extension;
+        String pictureURL = viewPathPicture + defaultPicture;
+        if (url != null && !url.equals("null")) {
+            pictureURL = viewPathPicture + url + "." + extension;
         }
 
         InputStream in;
-        try{
+        try {
             in = new FileInputStream(pictureURL);
-        }catch (Exception e){
-            in = new FileInputStream(viewPathPicture+defaultPicture);
+        } catch (Exception e) {
+            in = new FileInputStream(viewPathPicture + defaultPicture);
             extension = "png";
             e.printStackTrace();
         }
@@ -172,11 +179,23 @@ public class UniversityServiceImpl implements UniversityService {
         return ResponseEntity.ok().headers(headers).body(content);
     }
 
-    public String defineContentType(String extension){
-        if(extension.equals("jpg")){
+    public String defineContentType(String extension) {
+        if (extension.equals("jpg")) {
             return "image/jpeg";
-        }else {
+        } else {
             return "image/png";
         }
+    }
+
+    public int getSpeciality(Set<FacultyDTO> faculties) {
+        int n = 0;
+        for (FacultyDTO f : faculties) {
+            Optional<List<Specialty>> list = specialtyService.findAllByFaculty(f.getId());
+            if (list.isPresent()){
+                n += list.get().size();
+            }
+        }
+
+        return n;
     }
 }

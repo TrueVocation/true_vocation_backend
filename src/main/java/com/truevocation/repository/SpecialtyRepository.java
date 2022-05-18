@@ -27,4 +27,6 @@ public interface SpecialtyRepository extends JpaRepository<Specialty, Long> {
         "select specialty from Specialty specialty left join fetch specialty.subjects left join fetch specialty.professions where specialty.id =:id"
     )
     Optional<Specialty> findOneWithEagerRelationships(@Param("id") Long id);
+
+    Optional<List<Specialty>> findAllByFaculty_Id(Long id);
 }

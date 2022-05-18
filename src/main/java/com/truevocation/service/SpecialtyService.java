@@ -1,6 +1,9 @@
 package com.truevocation.service;
 
+import com.truevocation.domain.Specialty;
 import com.truevocation.service.dto.SpecialtyDTO;
+
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,4 +58,6 @@ public interface SpecialtyService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    Optional<List<Specialty>> findAllByFaculty(Long id);
 }

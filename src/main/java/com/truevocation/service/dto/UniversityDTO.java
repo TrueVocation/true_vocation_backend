@@ -34,6 +34,8 @@ public class UniversityDTO implements Serializable {
 
     private CityDTO city;
 
+    private int SpecialityCount;
+
     public Long getId() {
         return id;
     }
@@ -120,6 +122,14 @@ public class UniversityDTO implements Serializable {
 
     public void setCity(CityDTO city) {
         this.city = city;
+    }
+
+    public int getSpecialityCount() {
+        return SpecialityCount;
+    }
+
+    public void setSpecialityCount(int specialityCount) {
+        SpecialityCount = specialityCount;
     }
 
     @Override
