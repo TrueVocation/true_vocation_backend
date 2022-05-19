@@ -60,4 +60,6 @@ public interface SpecialtyService {
     void delete(Long id);
 
     Optional<List<Specialty>> findAllByFaculty(Long id);
+
+    Page<SpecialtyDTO> findAllByUniversity(Pageable page, Long id);
 }

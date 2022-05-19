@@ -85,4 +85,9 @@ public class SpecialtyServiceImpl implements SpecialtyService {
         log.debug("Request to delete Specialty : {}", id);
         return specialtyRepository.findAllByFaculty_Id(id);
     }
+
+    @Override
+    public Page<SpecialtyDTO> findAllByUniversity(Pageable page, Long id) {
+        return specialtyRepository.findAllByUniversity(page, id).map(specialtyMapper::toDto);
+    }
 }
