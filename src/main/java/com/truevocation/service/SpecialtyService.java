@@ -62,4 +62,6 @@ public interface SpecialtyService {
     Optional<List<Specialty>> findAllByFaculty(Long id);
 
     Page<SpecialtyDTO> findAllByUniversity(Pageable page, Long id);
+
+    Page<SpecialtyDTO> findAllByProfession(Pageable page, Long id);
 }

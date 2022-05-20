@@ -34,13 +34,25 @@ public interface SpecialtyRepository extends JpaRepository<Specialty, Long> {
 
     @Query(
         value = "SELECT * FROM specialty SP\n" +
-            "INNER JOIN faculty f on f.id = SP.faculty_id\n" +
-            "WHERE f.id in (\n" +
-            "    select id from faculty\n" +
-            "              inner join rel_university__faculty ruf on faculty.id = ruf.faculty_id\n" +
-            "              where university_id = 1\n" +
+            "INNER JOIN faculty f ON f.id = SP.faculty_id\n" +
+            "WHERE f.id IN (\n" +
+            "    SELECT id FROM faculty\n" +
+            "              INNER JOIN rel_university__faculty ruf ON faculty.id = ruf.faculty_id\n" +
+            "              WHERE university_id = :id\n" +
             "    )", nativeQuery = true,
         countQuery = "select count(distinct specialty) from Specialty specialty"
     )
     Page<Specialty> findAllByUniversity(Pageable pageable,@Param("id")  Long id);
+
+    @Query(
+        value = "SELECT * FROM specialty S\n" +
+            "INNER JOIN rel_specialty__profession RSP ON S.id = RSP.specialty_id\n" +
+            "WHERE RSP.profession_id IN (\n" +
+            "    SELECT profession.id FROM profession\n" +
+            "    WHERE id = :id\n" +
+            ")",
+        nativeQuery = true,
+        countQuery = "select count(distinct specialty) from Specialty specialty"
+    )
+    Page<Specialty> findAllByProfession(Pageable pageable,@Param("id")  Long id);
 }

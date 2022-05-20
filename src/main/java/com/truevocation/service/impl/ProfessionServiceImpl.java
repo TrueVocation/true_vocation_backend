@@ -61,6 +61,11 @@ public class ProfessionServiceImpl implements ProfessionService {
         return professionRepository.findAll(pageable).map(professionMapper::toDto);
     }
 
+    @Override
+    public Page<ProfessionDTO> findAllBySpeciality(Pageable pageable, Long id) {
+        return professionRepository.findAllBySpecialties(pageable, id).map(professionMapper::toDto);
+    }
+
     public Page<ProfessionDTO> findAllWithEagerRelationships(Pageable pageable) {
         return professionRepository.findAllWithEagerRelationships(pageable).map(professionMapper::toDto);
     }

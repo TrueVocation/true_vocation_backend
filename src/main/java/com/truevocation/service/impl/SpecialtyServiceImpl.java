@@ -90,4 +90,9 @@ public class SpecialtyServiceImpl implements SpecialtyService {
     public Page<SpecialtyDTO> findAllByUniversity(Pageable page, Long id) {
         return specialtyRepository.findAllByUniversity(page, id).map(specialtyMapper::toDto);
     }
+
+    @Override
+    public Page<SpecialtyDTO> findAllByProfession(Pageable page, Long id) {
+        return specialtyRepository.findAllByProfession(page, id).map(specialtyMapper::toDto);
+    }
 }

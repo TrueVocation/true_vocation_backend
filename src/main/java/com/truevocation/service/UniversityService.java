@@ -47,6 +47,8 @@ public interface UniversityService {
      */
     Page<UniversityDTO> findAllWithEagerRelationships(Pageable pageable);
 
+    Page<UniversityDTO> findAllBySpeciality(Pageable pageable, Long id);
+
     /**
      * Get the "id" university.
      *

@@ -106,6 +106,11 @@ public class UniversityServiceImpl implements UniversityService {
     }
 
     @Override
+    public Page<UniversityDTO> findAllBySpeciality(Pageable pageable, Long id) {
+        return universityRepository.findAllBySpecialityId(pageable, id).map(universityMapper::toDto);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Optional<UniversityDTO> findOne(Long id) {
         log.debug("Request to get University : {}", id);

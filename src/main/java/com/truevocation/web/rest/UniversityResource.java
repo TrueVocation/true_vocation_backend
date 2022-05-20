@@ -167,6 +167,15 @@ public class UniversityResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
+    @GetMapping("/universities-by-speciality/{id}")
+    public ResponseEntity<List<UniversityDTO>> getAllUniversitiesBySpeciality(
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        @PathVariable Long id) {
+        Page<UniversityDTO> page = universityService.findAllBySpeciality(pageable, id);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
     /**
      * {@code GET  /universities/:id} : get the "id" university.
      *

@@ -25,4 +25,16 @@ public interface ProfessionRepository extends JpaRepository<Profession, Long> {
 
     @Query("select profession from Profession profession left join fetch profession.courses where profession.id =:id")
     Optional<Profession> findOneWithEagerRelationships(@Param("id") Long id);
+
+    @Query(
+        value = "SELECT * FROM profession P\n" +
+            "INNER JOIN rel_specialty__profession RSP on P.id = RSP.profession_id\n" +
+            "WHERE RSP.specialty_id in (\n" +
+            "    select specialty.id from specialty\n" +
+            "    where id = :id\n" +
+            ")",
+        nativeQuery = true,
+        countQuery = "select count(distinct profession) from Profession profession"
+    )
+    Page<Profession> findAllBySpecialties(Pageable pageable, @Param("id") Long id);
 }
