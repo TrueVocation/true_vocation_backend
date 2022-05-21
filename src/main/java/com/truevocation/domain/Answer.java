@@ -36,6 +36,9 @@ public class Answer implements Serializable {
     @JsonIgnoreProperties(value = { "answers", "answerUser", "profTest" }, allowSetters = true)
     private Set<Question> questions = new HashSet<>();
 
+    @Column(name = "point")
+    private int point;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -63,6 +66,20 @@ public class Answer implements Serializable {
     public void setAnswer(String answer) {
         this.answer = answer;
     }
+
+    public int getPoint() {
+        return this.point;
+    }
+
+    public Answer point(int point) {
+        this.setPoint(point);
+        return this;
+    }
+
+    public void setPoint(int point) {
+        this.point = point;
+    }
+
 
     public AnswerUser getAnswerUser() {
         return this.answerUser;

@@ -64,4 +64,7 @@
     <include file="config/liquibase/changelog/20220226065244_added_entity_constraints_Pictures.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20220512085000_add_column_point_answer_entity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220512034700_insert_prof_test.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220515032500_insert_questions.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

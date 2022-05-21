@@ -6,6 +6,8 @@ import com.truevocation.service.TestResultService;
 import com.truevocation.service.dto.TestResultDTO;
 import com.truevocation.service.mapper.TestResultMapper;
 import java.util.Optional;
+import java.util.concurrent.atomic.LongAccumulator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -73,4 +75,11 @@ public class TestResultServiceImpl implements TestResultService {
         log.debug("Request to delete TestResult : {}", id);
         testResultRepository.deleteById(id);
     }
+
+    @Override
+    public TestResultDTO findByAppUserId(Long id) {
+        return testResultMapper.toDto(testResultRepository.findByAppUserId(id));
+    }
+
+
 }

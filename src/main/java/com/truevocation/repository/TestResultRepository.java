@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface TestResultRepository extends JpaRepository<TestResult, Long> {}
+public interface TestResultRepository extends JpaRepository<TestResult, Long> {
+    TestResult findByAppUserId(Long id);
+}
