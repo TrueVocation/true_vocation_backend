@@ -2,6 +2,7 @@ package com.truevocation.service;
 
 import com.github.dockerjava.api.exception.InternalServerErrorException;
 import com.truevocation.config.Constants;
+import com.truevocation.domain.AppUser;
 import com.truevocation.domain.Authority;
 import com.truevocation.domain.University;
 import com.truevocation.domain.User;
@@ -10,6 +11,7 @@ import com.truevocation.repository.UserRepository;
 import com.truevocation.security.AuthoritiesConstants;
 import com.truevocation.security.SecurityUtils;
 import com.truevocation.service.dto.AdminUserDTO;
+import com.truevocation.service.dto.AppUserDTO;
 import com.truevocation.service.dto.UniversityDTO;
 import com.truevocation.service.dto.UserDTO;
 
@@ -24,9 +26,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.truevocation.service.mapper.UserMapper;
+import com.truevocation.web.rest.vm.UserRegisterDto;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
@@ -58,6 +63,12 @@ public class UserService {
     private final AuthorityRepository authorityRepository;
 
     private final CacheManager cacheManager;
+
+    @Autowired
+    private AppUserService appUserService;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Value("${file.avatar.viewPath}")
     private String viewPathAvatar;
@@ -120,6 +131,55 @@ public class UserService {
                 return user;
             });
     }
+
+    public User registerUserAccount(UserRegisterDto userRegisterDto, String password) {
+        userRepository
+            .findOneByLogin(userRegisterDto.getLogin().toLowerCase())
+            .ifPresent(existingUser -> {
+                boolean removed = removeNonActivatedUser(existingUser);
+                if (!removed) {
+                    throw new UsernameAlreadyUsedException();
+                }
+            });
+        userRepository
+            .findOneByEmailIgnoreCase(userRegisterDto.getEmail())
+            .ifPresent(existingUser -> {
+                boolean removed = removeNonActivatedUser(existingUser);
+                if (!removed) {
+                    throw new EmailAlreadyUsedException();
+                }
+            });
+        User newUser = new User();
+
+        String encryptedPassword = passwordEncoder.encode(password);
+        newUser.setLogin(userRegisterDto.getLogin().toLowerCase());
+        // new user gets initially a generated password
+        newUser.setPassword(encryptedPassword);
+        newUser.setFirstName(userRegisterDto.getFirstName());
+        newUser.setLastName(userRegisterDto.getLastName());
+        if (userRegisterDto.getEmail() != null) {
+            newUser.setEmail(userRegisterDto.getEmail().toLowerCase());
+        }
+        newUser.setImageUrl(userRegisterDto.getImageUrl());
+        newUser.setLangKey(userRegisterDto.getLangKey());
+        // new user is not active
+        newUser.setActivated(false);
+        // new user gets registration key
+        newUser.setActivationKey(RandomUtil.generateActivationKey());
+        Set<Authority> authorities = new HashSet<>();
+        authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
+        newUser.setAuthorities(authorities);
+        newUser = userRepository.save(newUser);
+        AppUserDTO appUserDTO = new AppUserDTO();
+        appUserDTO.setBirthdate(userRegisterDto.getBirthdate());
+        appUserDTO.setPhoneNumber(userRegisterDto.getPhoneNumber());
+        appUserDTO.setUser(userMapper.userToUserDTO(newUser));
+        appUserService.save(appUserDTO);
+        this.clearUserCaches(newUser);
+        log.debug("Created Information for User: {}", newUser);
+        return newUser;
+    }
+
 
     public User registerUser(AdminUserDTO userDTO, String password) {
         userRepository

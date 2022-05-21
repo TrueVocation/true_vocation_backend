@@ -212,7 +212,7 @@ jhipster:
 # application:
 
 truevocation:
-  is-production: true
+  is-production: false
 
 file:
   avatar:

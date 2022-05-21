@@ -101,6 +101,13 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Optional<AppUserDTO> findByUserId(Long id) {
+        log.debug("Request to get AppUser : {}", id);
+        return appUserRepository.findAppUserByUserId(id).map(appUserMapper::toDto);
+    }
+
+    @Override
     public void delete(Long id) {
         log.debug("Request to delete AppUser : {}", id);
         appUserRepository.deleteById(id);

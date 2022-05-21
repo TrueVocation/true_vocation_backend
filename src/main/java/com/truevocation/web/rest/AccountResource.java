@@ -1,26 +1,29 @@
 package com.truevocation.web.rest;
 
+import com.truevocation.domain.AppUser;
+import com.truevocation.domain.Authority;
 import com.truevocation.domain.User;
 import com.truevocation.repository.UserRepository;
 import com.truevocation.security.SecurityUtils;
+import com.truevocation.service.AppUserService;
 import com.truevocation.service.MailService;
 import com.truevocation.service.UserService;
-import com.truevocation.service.dto.AdminUserDTO;
-import com.truevocation.service.dto.PasswordChangeDTO;
-import com.truevocation.service.dto.UniversityDTO;
-import com.truevocation.service.dto.UserDTO;
+import com.truevocation.service.dto.*;
 import com.truevocation.web.rest.errors.*;
 import com.truevocation.web.rest.vm.KeyAndPasswordVM;
 import com.truevocation.web.rest.vm.ManagedUserVM;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import com.truevocation.web.rest.vm.UserRegisterDto;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,7 +43,7 @@ public class AccountResource {
     @Value("${truevocation.is-production}")
     private boolean isProduction;
 
-    private static final String CLIENT_URL_LOCALHOST = "http://localhost:9000/login";
+    private static final String CLIENT_URL_LOCALHOST = "http://localhost:3000/sign-in";
 
     private static final String CLIENT_URL_PRODUCTION = "http://localhost:9000";
 
@@ -58,6 +61,9 @@ public class AccountResource {
     private final UserService userService;
 
     private final MailService mailService;
+
+    @Autowired
+    private AppUserService appUserService;
 
     public AccountResource(UserRepository userRepository, UserService userService, MailService mailService) {
         this.userRepository = userRepository;
@@ -124,6 +130,35 @@ public class AccountResource {
             .map(AdminUserDTO::new)
             .orElseThrow(() -> new AccountResourceException("User could not be found"));
     }
+
+
+    @GetMapping("/user")
+    public UserRegisterDto getUserAccount() {
+        return userService
+            .getUserWithAuthorities()
+            .map(user ->{
+                UserRegisterDto dto = new UserRegisterDto();
+                AppUserDTO appUserDTO = appUserService.findByUserId(user.getId()).orElse(null);
+                if(!Objects.isNull(appUserDTO)){
+                    dto.setBirthdate(appUserDTO.getBirthdate());
+                    dto.setPhoneNumber(appUserDTO.getPhoneNumber());
+                }
+                Set<Authority> authorities = user.getAuthorities();
+                Set<String> stringAuthorities = authorities.stream().map(Authority::getName).collect(Collectors.toSet());
+                dto.setAuthorities(stringAuthorities);
+                dto.setActivated(user.isActivated());
+                dto.setEmail(user.getEmail());
+                dto.setFirstName(user.getFirstName());
+                dto.setLastName(user.getLastName());
+                dto.setId(user.getId());
+                dto.setImageUrl(user.getImageUrl());
+                dto.setLogin(user.getLogin());
+                return dto;
+            })
+            .orElseThrow(() -> new AccountResourceException("User could not be found"));
+    }
+
+
 
     /**
      * {@code POST  /account} : update the current user information.
@@ -215,7 +250,7 @@ public class AccountResource {
 
     @PostMapping(value = "/uploadAvatar/{id}")
 //    @PreAuthorize("hasRole(ROLE_ADMIN)")
-    public ResponseEntity<User> uploadPicture(@RequestParam(name = "picture") MultipartFile file,
+    public ResponseEntity<User> uploadPicture(@RequestBody MultipartFile file,
                                               @PathVariable(name = "id") Long id) {
         User user = userService.saveAvatar(file, id);
         if (!Objects.isNull(user)) {
@@ -230,5 +265,16 @@ public class AccountResource {
     public ResponseEntity<byte[]> viewItemPicture(@PathVariable("id") Long id,
                                                   @RequestParam(name = "url") String url) throws IOException {
         return userService.getAvatar(id, url);
+    }
+
+
+    @PostMapping("/registration")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void registerUserAccount(@Valid @RequestBody UserRegisterDto userRegisterDto) {
+        if (isPasswordLengthInvalid(userRegisterDto.getPassword())) {
+            throw new InvalidPasswordException();
+        }
+        User user = userService.registerUserAccount(userRegisterDto, userRegisterDto.getPassword());
+        mailService.sendActivationEmail(user);
     }
 }
