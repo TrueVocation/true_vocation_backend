@@ -1,6 +1,5 @@
 package com.truevocation.web.rest;
 
-import com.truevocation.domain.AppUser;
 import com.truevocation.domain.Authority;
 import com.truevocation.domain.User;
 import com.truevocation.repository.UserRepository;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import com.truevocation.web.rest.vm.UserRegisterDto;
+import com.truevocation.web.rest.vm.UserAccountDto;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,11 +132,11 @@ public class AccountResource {
 
 
     @GetMapping("/user")
-    public UserRegisterDto getUserAccount() {
+    public UserAccountDto getUserAccount() {
         return userService
             .getUserWithAuthorities()
             .map(user ->{
-                UserRegisterDto dto = new UserRegisterDto();
+                UserAccountDto dto = new UserAccountDto();
                 AppUserDTO appUserDTO = appUserService.findByUserId(user.getId()).orElse(null);
                 if(!Objects.isNull(appUserDTO)){
                     dto.setBirthdate(appUserDTO.getBirthdate());
@@ -262,7 +261,7 @@ public class AccountResource {
 
     @GetMapping(value = "/viewAvatar/{id}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     @PreAuthorize("isAnonymous() || isAuthenticated()")
-    public ResponseEntity<byte[]> viewItemPicture(@PathVariable("id") Long id,
+    public ResponseEntity<byte[]> viewAvatar(@PathVariable("id") Long id,
                                                   @RequestParam(name = "url") String url) throws IOException {
         return userService.getAvatar(id, url);
     }
@@ -270,11 +269,18 @@ public class AccountResource {
 
     @PostMapping("/registration")
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerUserAccount(@Valid @RequestBody UserRegisterDto userRegisterDto) {
-        if (isPasswordLengthInvalid(userRegisterDto.getPassword())) {
+    public void registerUserAccount(@Valid @RequestBody UserAccountDto userAccountDto) {
+        if (isPasswordLengthInvalid(userAccountDto.getPassword())) {
             throw new InvalidPasswordException();
         }
-        User user = userService.registerUserAccount(userRegisterDto, userRegisterDto.getPassword());
+        User user = userService.registerUserAccount(userAccountDto, userAccountDto.getPassword());
         mailService.sendActivationEmail(user);
+    }
+
+    @PostMapping("/update-profile")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<UserAccountDto> updateProfile(@RequestBody UserAccountDto userAccountDto) {
+        UserAccountDto user = userService.updateProfile(userAccountDto);
+        return ResponseEntity.ok(user);
     }
 }

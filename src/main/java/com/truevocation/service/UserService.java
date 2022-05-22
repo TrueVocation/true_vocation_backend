@@ -4,7 +4,6 @@ import com.github.dockerjava.api.exception.InternalServerErrorException;
 import com.truevocation.config.Constants;
 import com.truevocation.domain.AppUser;
 import com.truevocation.domain.Authority;
-import com.truevocation.domain.University;
 import com.truevocation.domain.User;
 import com.truevocation.repository.AuthorityRepository;
 import com.truevocation.repository.UserRepository;
@@ -12,7 +11,6 @@ import com.truevocation.security.AuthoritiesConstants;
 import com.truevocation.security.SecurityUtils;
 import com.truevocation.service.dto.AdminUserDTO;
 import com.truevocation.service.dto.AppUserDTO;
-import com.truevocation.service.dto.UniversityDTO;
 import com.truevocation.service.dto.UserDTO;
 
 import java.io.FileInputStream;
@@ -27,7 +25,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.truevocation.service.mapper.UserMapper;
-import com.truevocation.web.rest.vm.UserRegisterDto;
+import com.truevocation.web.rest.vm.UserAccountDto;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,9 +130,9 @@ public class UserService {
             });
     }
 
-    public User registerUserAccount(UserRegisterDto userRegisterDto, String password) {
+    public User registerUserAccount(UserAccountDto userAccountDto, String password) {
         userRepository
-            .findOneByLogin(userRegisterDto.getLogin().toLowerCase())
+            .findOneByLogin(userAccountDto.getLogin().toLowerCase())
             .ifPresent(existingUser -> {
                 boolean removed = removeNonActivatedUser(existingUser);
                 if (!removed) {
@@ -142,7 +140,7 @@ public class UserService {
                 }
             });
         userRepository
-            .findOneByEmailIgnoreCase(userRegisterDto.getEmail())
+            .findOneByEmailIgnoreCase(userAccountDto.getEmail())
             .ifPresent(existingUser -> {
                 boolean removed = removeNonActivatedUser(existingUser);
                 if (!removed) {
@@ -152,16 +150,16 @@ public class UserService {
         User newUser = new User();
 
         String encryptedPassword = passwordEncoder.encode(password);
-        newUser.setLogin(userRegisterDto.getLogin().toLowerCase());
+        newUser.setLogin(userAccountDto.getLogin().toLowerCase());
         // new user gets initially a generated password
         newUser.setPassword(encryptedPassword);
-        newUser.setFirstName(userRegisterDto.getFirstName());
-        newUser.setLastName(userRegisterDto.getLastName());
-        if (userRegisterDto.getEmail() != null) {
-            newUser.setEmail(userRegisterDto.getEmail().toLowerCase());
+        newUser.setFirstName(userAccountDto.getFirstName());
+        newUser.setLastName(userAccountDto.getLastName());
+        if (userAccountDto.getEmail() != null) {
+            newUser.setEmail(userAccountDto.getEmail().toLowerCase());
         }
-        newUser.setImageUrl(userRegisterDto.getImageUrl());
-        newUser.setLangKey(userRegisterDto.getLangKey());
+        newUser.setImageUrl(userAccountDto.getImageUrl());
+        newUser.setLangKey(userAccountDto.getLangKey());
         // new user is not active
         newUser.setActivated(false);
         // new user gets registration key
@@ -171,8 +169,8 @@ public class UserService {
         newUser.setAuthorities(authorities);
         newUser = userRepository.save(newUser);
         AppUserDTO appUserDTO = new AppUserDTO();
-        appUserDTO.setBirthdate(userRegisterDto.getBirthdate());
-        appUserDTO.setPhoneNumber(userRegisterDto.getPhoneNumber());
+        appUserDTO.setBirthdate(userAccountDto.getBirthdate());
+        appUserDTO.setPhoneNumber(userAccountDto.getPhoneNumber());
         appUserDTO.setUser(userMapper.userToUserDTO(newUser));
         appUserService.save(appUserDTO);
         this.clearUserCaches(newUser);
@@ -304,6 +302,30 @@ public class UserService {
                 return user;
             })
             .map(AdminUserDTO::new);
+    }
+
+    @Transactional
+    public UserAccountDto updateProfile(UserAccountDto userAccountDto) {
+        User user = userRepository.findOneByLogin(userAccountDto.getLogin()).orElse(null);
+        if(Objects.isNull(user)){
+            throw new EntityNotFoundException("User not found");
+        }
+        updateUser(
+            userAccountDto.getFirstName(),
+            userAccountDto.getLastName(),
+            userAccountDto.getEmail(),
+            user.getLangKey(),
+            user.getImageUrl()
+        );
+        AppUserDTO appUser =  appUserService.findByUserId(user.getId()).orElse(null);
+        if(Objects.isNull(appUser)){
+            throw new EntityNotFoundException("User not found");
+        }
+        appUser.setBirthdate(userAccountDto.getBirthdate());
+        appUser.setPhoneNumber(userAccountDto.getPhoneNumber());
+        appUserService.save(appUser);
+
+        return userAccountDto;
     }
 
     public void deleteUser(String login) {

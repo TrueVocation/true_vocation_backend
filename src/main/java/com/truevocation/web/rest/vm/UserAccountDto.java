@@ -2,11 +2,11 @@ package com.truevocation.web.rest.vm;
 
 import java.time.LocalDate;
 
-public class UserRegisterDto extends ManagedUserVM {
+public class UserAccountDto extends ManagedUserVM {
     private String phoneNumber;
     private LocalDate birthdate;
 
-    public UserRegisterDto() {
+    public UserAccountDto() {
     }
 
     public String getPhoneNumber() {
