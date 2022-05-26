@@ -14,6 +14,8 @@ public class PostDTO implements Serializable {
 
     private String title;
 
+    private String tag;
+
     @Size(max = 1000)
     private String shortDescription;
 
@@ -72,6 +74,14 @@ public class PostDTO implements Serializable {
         this.createdDate = createdDate;
     }
 
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -94,15 +104,17 @@ public class PostDTO implements Serializable {
     }
 
     // prettier-ignore
+
     @Override
     public String toString() {
         return "PostDTO{" +
-            "id=" + getId() +
-            ", title='" + getTitle() + "'" +
-            ", shortDescription='" + getShortDescription() + "'" +
-            ", description='" + getDescription() + "'" +
-            ", picture='" + getPicture() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            "}";
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", tag='" + tag + '\'' +
+            ", shortDescription='" + shortDescription + '\'' +
+            ", description='" + description + '\'' +
+            ", picture='" + picture + '\'' +
+            ", createdDate=" + createdDate +
+            '}';
     }
 }

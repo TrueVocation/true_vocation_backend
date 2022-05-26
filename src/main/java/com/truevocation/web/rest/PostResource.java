@@ -3,7 +3,10 @@ package com.truevocation.web.rest;
 import com.truevocation.repository.PostRepository;
 import com.truevocation.service.PostService;
 import com.truevocation.service.dto.PostDTO;
+import com.truevocation.service.dto.UniversityDTO;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
+
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -18,8 +21,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -145,11 +151,11 @@ public class PostResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of posts in body.
      */
     @GetMapping("/posts")
-    public ResponseEntity<List<PostDTO>> getAllPosts(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<Page<PostDTO>> getAllPosts(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of Posts");
         Page<PostDTO> page = postService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity.ok().headers(headers).body(page);
     }
 
     /**
@@ -179,5 +185,23 @@ public class PostResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @PostMapping(value = "/posts/uploadPicture")
+//    @PreAuthorize("hasRole(ROLE_ADMIN)")
+    public ResponseEntity<PostDTO> uploadPicture(@RequestParam(name = "picture") MultipartFile file,
+                                                       @RequestParam(name = "post_id")Long postId){
+        PostDTO postDTO = postService.uploadPicture(file, postId);
+        if(!Objects.isNull(postDTO)){
+            return ResponseEntity.ok(postDTO);
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+
+    @GetMapping(value = "/posts/viewPicture",produces = {MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE})
+    @PreAuthorize("isAnonymous() || isAuthenticated()")
+    public ResponseEntity<byte[]> viewUniversityPicture(@RequestParam(name = "url")String url) throws IOException {
+        return postService.getPicture(url);
     }
 }

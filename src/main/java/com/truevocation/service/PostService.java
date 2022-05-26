@@ -1,9 +1,14 @@
 package com.truevocation.service;
 
 import com.truevocation.service.dto.PostDTO;
-import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Service Interface for managing {@link com.truevocation.domain.Post}.
@@ -47,4 +52,10 @@ public interface PostService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    PostDTO uploadPicture(MultipartFile file, Long postId);
+
+    ResponseEntity<byte[]> getPicture(String url) throws IOException;
+
+    HttpHeaders addCustomPaginationHeaders(HttpHeaders headers, Page<PostDTO> page);
 }
