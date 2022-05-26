@@ -33,7 +33,19 @@ public interface UniversityRepository extends JpaRepository<University, Long> {
         nativeQuery = true,
         countQuery = "select count(distinct university) from University university"
     )
-    Page<University> findAllBySpecialityId(Pageable pageable,@Param("id") Long id);
+    Page<University> findAllBySpecialityId(Pageable pageable, @Param("id") Long id);
+
+    @Query(
+        value = "SELECT COUNT(*) FROM specialty SP\n" +
+            "INNER JOIN faculty f ON f.id = SP.faculty_id\n" +
+            "WHERE f.id IN (\n" +
+            "    SELECT id FROM faculty\n" +
+            "              INNER JOIN rel_university__faculty ruf ON faculty.id = ruf.faculty_id\n" +
+            "              WHERE university_id = :id\n" +
+            "    )", nativeQuery = true,
+        countQuery = "select count(distinct specialty) from Specialty specialty"
+    )
+    int countAllSpecialityByUniversity(@Param("id") Long id);
 
     @Query("select distinct university from University university left join fetch university.faculties")
     List<University> findAllWithEagerRelationships();

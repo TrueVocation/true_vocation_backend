@@ -42,7 +42,7 @@ public interface SpecialtyRepository extends JpaRepository<Specialty, Long> {
             "    )", nativeQuery = true,
         countQuery = "select count(distinct specialty) from Specialty specialty"
     )
-    Page<Specialty> findAllByUniversity(Pageable pageable,@Param("id")  Long id);
+    Page<Specialty> findAllByUniversity(Pageable pageable, @Param("id") Long id);
 
     @Query(
         value = "SELECT * FROM specialty S\n" +
@@ -54,5 +54,5 @@ public interface SpecialtyRepository extends JpaRepository<Specialty, Long> {
         nativeQuery = true,
         countQuery = "select count(distinct specialty) from Specialty specialty"
     )
-    Page<Specialty> findAllByProfession(Pageable pageable,@Param("id")  Long id);
+    Page<Specialty> findAllByProfession(Pageable pageable, @Param("id") Long id);
 }

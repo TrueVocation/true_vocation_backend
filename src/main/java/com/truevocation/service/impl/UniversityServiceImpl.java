@@ -1,12 +1,10 @@
 package com.truevocation.service.impl;
 
 import com.github.dockerjava.api.exception.InternalServerErrorException;
-import com.truevocation.domain.Specialty;
 import com.truevocation.domain.University;
 import com.truevocation.repository.UniversityRepository;
 import com.truevocation.service.SpecialtyService;
 import com.truevocation.service.UniversityService;
-import com.truevocation.service.dto.FacultyDTO;
 import com.truevocation.service.dto.UniversityDTO;
 import com.truevocation.service.mapper.UniversityMapper;
 import org.apache.commons.io.IOUtils;
@@ -28,7 +26,10 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Base64;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Implementation for managing {@link University}.
@@ -88,8 +89,8 @@ public class UniversityServiceImpl implements UniversityService {
     public Page<UniversityDTO> findAll(Pageable pageable) {
         Page<UniversityDTO> universityDTOS = universityRepository.findAll(pageable).map(universityMapper::toDto);
         for (UniversityDTO u : universityDTOS) {
-            if (!u.getFaculties().isEmpty()){
-                u.setSpecialityCount(getSpeciality(u.getFaculties()));
+            if (!u.getFaculties().isEmpty()) {
+                u.setSpecialityCount(universityRepository.countAllSpecialityByUniversity(u.getId()));
             }
         }
 
@@ -99,7 +100,7 @@ public class UniversityServiceImpl implements UniversityService {
     public Page<UniversityDTO> findAllWithEagerRelationships(Pageable pageable) {
         Page<UniversityDTO> universityDTOS = universityRepository.findAllWithEagerRelationships(pageable).map(universityMapper::toDto);
         for (UniversityDTO u : universityDTOS) {
-            u.setSpecialityCount(getSpeciality(u.getFaculties()));
+            u.setSpecialityCount(universityRepository.countAllSpecialityByUniversity(u.getId()));
         }
 
         return universityDTOS;
@@ -190,17 +191,5 @@ public class UniversityServiceImpl implements UniversityService {
         } else {
             return "image/png";
         }
-    }
-
-    public int getSpeciality(Set<FacultyDTO> faculties) {
-        int n = 0;
-        for (FacultyDTO f : faculties) {
-            Optional<List<Specialty>> list = specialtyService.findAllByFaculty(f.getId());
-            if (list.isPresent()){
-                n += list.get().size();
-            }
-        }
-
-        return n;
     }
 }
