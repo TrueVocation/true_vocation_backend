@@ -47,6 +47,12 @@ public class Specialty implements Serializable {
     @Column(name = "type")
     private String type;
 
+    @Column(name = "price")
+    private Integer price;
+
+    @Column(name = "employment")
+    private String employment;
+
     @ManyToMany
     @JoinTable(
         name = "rel_specialty__subject",
@@ -72,6 +78,14 @@ public class Specialty implements Serializable {
     private Faculty faculty;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
+    public String getEmployment() {
+        return employment;
+    }
+
+    public void setEmployment(String employment) {
+        this.employment = employment;
+    }
 
     public Long getId() {
         return this.id;
@@ -238,6 +252,13 @@ public class Specialty implements Serializable {
     public Specialty faculty(Faculty faculty) {
         this.setFaculty(faculty);
         return this;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

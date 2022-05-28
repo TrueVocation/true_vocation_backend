@@ -2,13 +2,15 @@ package com.truevocation.service.mapper;
 
 import com.truevocation.domain.University;
 import com.truevocation.service.dto.UniversityDTO;
-import java.util.Set;
-import org.mapstruct.*;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 /**
  * Mapper for the entity {@link University} and its DTO {@link UniversityDTO}.
  */
-@Mapper(componentModel = "spring", uses = { FacultyMapper.class, CityMapper.class })
+@Mapper(componentModel = "spring", uses = {FacultyMapper.class, CityMapper.class})
 public interface UniversityMapper extends EntityMapper<UniversityDTO, University> {
     @Mapping(target = "faculties", source = "faculties", qualifiedByName = "idSet")
     @Mapping(target = "city", source = "city", qualifiedByName = "id")

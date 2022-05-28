@@ -160,6 +160,23 @@ public class SpecialtyResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
+    @GetMapping("/specialties-by-university/{id}")
+    public ResponseEntity<List<SpecialtyDTO>> getAllSpecialtiesByUniversityId(
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        @PathVariable Long id) {
+        Page<SpecialtyDTO> page = specialtyService.findAllByUniversity(pageable, id);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/specialties-by-profession/{id}")
+    public ResponseEntity<List<SpecialtyDTO>> getAllSpecialtiesByProfessionId(
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        @PathVariable Long id) {
+        Page<SpecialtyDTO> page = specialtyService.findAllByProfession(pageable, id);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
 
     /**
      * {@code GET  /specialties/:id} : get the "id" specialty.
