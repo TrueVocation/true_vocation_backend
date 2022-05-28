@@ -39,7 +39,7 @@ public class MailService {
 
     private static final  String BASE_URL_LOCALHOST = "http://localhost:8080";
 
-    private static final  String BASE_URL_PRODUCTION = "https://true-vocation.herokuapp.com/";
+    private static final  String BASE_URL_PRODUCTION = "https://true-vocation.herokuapp.com";
 
     private static final  String CLIENT_URL_LOCALHOST = "http://localhost:3000";
 
