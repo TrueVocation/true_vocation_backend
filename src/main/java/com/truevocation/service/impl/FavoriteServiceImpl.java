@@ -73,4 +73,9 @@ public class FavoriteServiceImpl implements FavoriteService {
         log.debug("Request to delete Favorite : {}", id);
         favoriteRepository.deleteById(id);
     }
+
+    @Override
+    public boolean isFavorite(Long postId, Long userId) {
+        return favoriteRepository.isFavorite(postId, userId);
+    }
 }

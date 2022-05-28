@@ -47,4 +47,6 @@ public interface CommentsService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    int getPostCommentsCount(Long postId);
 }

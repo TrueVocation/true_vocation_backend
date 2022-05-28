@@ -3,9 +3,11 @@ package com.truevocation.service.impl;
 import com.github.dockerjava.api.exception.InternalServerErrorException;
 import com.truevocation.domain.Post;
 import com.truevocation.domain.University;
+import com.truevocation.domain.User;
 import com.truevocation.repository.PostRepository;
-import com.truevocation.service.PostService;
+import com.truevocation.service.*;
 import com.truevocation.service.dto.PostDTO;
+import com.truevocation.service.dto.PostsPageDTO;
 import com.truevocation.service.dto.UniversityDTO;
 import com.truevocation.service.mapper.PostMapper;
 
@@ -16,14 +18,13 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Base64;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +48,18 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     private final PostMapper postMapper;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private LikesService likesService;
+
+    @Autowired
+    private CommentsService commentsService;
+
+    @Autowired
+    private FavoriteService favoriteService;
 
     @Value("${file.posts.viewPath}")
     private String viewPathPicture;
@@ -115,7 +128,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDTO uploadPicture(MultipartFile file, Long postId) {
-        if(Objects.equals(file.getContentType(), "image/jpeg") || Objects.equals(file.getContentType(), "image/png")) {
+        if (Objects.equals(file.getContentType(), "image/jpeg") || Objects.equals(file.getContentType(), "image/png")) {
             String extension;
             if ("image/jpeg".equals(file.getContentType())) {
                 extension = ".jpg";
@@ -124,7 +137,7 @@ public class PostServiceImpl implements PostService {
             }
             try {
                 PostDTO postDTO = this.findOne(postId).orElse(null);
-                if(Objects.isNull(postDTO)){
+                if (Objects.isNull(postDTO)) {
                     throw new EntityNotFoundException("Post entity not found");
                 }
 
@@ -149,21 +162,21 @@ public class PostServiceImpl implements PostService {
     public ResponseEntity<byte[]> getPicture(String url) throws IOException {
         Post post = postRepository.findByPictureEquals(url);
         String extension = "";
-        if (post.getPicture() != null && (post.getPicture().contains(".jpg") || post.getPicture().contains(".png"))){
+        if (post.getPicture() != null && (post.getPicture().contains(".jpg") || post.getPicture().contains(".png"))) {
             String[] pictureSplit = post.getPicture().split("\\.");
             url = pictureSplit[0];
             extension = pictureSplit[1];
         }
-        String pictureURL = viewPathPicture+defaultPicture;
-        if(url!=null && !url.equals("null")){
-            pictureURL = viewPathPicture+url+"."+extension;
+        String pictureURL = viewPathPicture + defaultPicture;
+        if (url != null && !url.equals("null")) {
+            pictureURL = viewPathPicture + url + "." + extension;
         }
 
         InputStream in;
-        try{
+        try {
             in = new FileInputStream(pictureURL);
-        }catch (Exception e){
-            in = new FileInputStream(viewPathPicture+defaultPicture);
+        } catch (Exception e) {
+            in = new FileInputStream(viewPathPicture + defaultPicture);
             extension = "png";
             e.printStackTrace();
         }
@@ -174,10 +187,10 @@ public class PostServiceImpl implements PostService {
         return ResponseEntity.ok().headers(headers).body(content);
     }
 
-    public String defineContentType(String extension){
-        if(extension.equals("jpg")){
+    public String defineContentType(String extension) {
+        if (extension.equals("jpg")) {
             return "image/jpeg";
-        }else {
+        } else {
             return "image/png";
         }
     }
@@ -189,7 +202,7 @@ public class PostServiceImpl implements PostService {
         boolean last = page.isLast();
         boolean first = page.isFirst();
         int size = page.getSize();
-        int number = page.getNumber()+1;
+        int number = page.getNumber() + 1;
         headers.add(TOTAL_PAGES, String.valueOf(totalPages));
         headers.add(TOTAL_ELEMENTS, String.valueOf(totalElements));
         headers.add(IS_LAST_PAGE, String.valueOf(last));
@@ -198,4 +211,29 @@ public class PostServiceImpl implements PostService {
         headers.add(PAGE_NUMBER, String.valueOf(number));
         return headers;
     }
+
+
+    @Override
+    public PostsPageDTO findAllForPostsPage(String searchText, Pageable pageable) {
+        PostsPageDTO postsPageDTO = new PostsPageDTO();
+        User user = userService.getUserWithAuthorities().orElse(null);
+        Page<PostDTO> latestPostsPage = postRepository.findAllByTitleContaining(searchText, pageable)
+            .map(postMapper::toDto)
+            .map(postDTO -> {
+                postDTO.setLikeCount(likesService.getPostLikesCount(postDTO.getId()));
+                postDTO.setCommentCount(commentsService.getPostCommentsCount(postDTO.getId()));
+                if(!Objects.isNull(user)){
+                    postDTO.setLiked(likesService.isLiked(postDTO.getId(), user.getId()));
+                    postDTO.setFavorite(favoriteService.isFavorite(postDTO.getId(), user.getId()));
+                }
+                return postDTO;
+            })
+            ;
+        List<PostDTO> postDTOList = postRepository.findAllOldPosts().stream().map(postMapper::toDto).collect(Collectors.toList());
+        postsPageDTO.setOldPosts(postDTOList);
+        postsPageDTO.setLatestPosts(latestPostsPage);
+        return postsPageDTO;
+    }
+
+
 }

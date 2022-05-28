@@ -47,4 +47,8 @@ public interface LikesService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    int getPostLikesCount(Long postId);
+
+    boolean isLiked(Long postId, Long userId);
 }

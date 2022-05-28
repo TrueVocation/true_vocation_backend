@@ -73,4 +73,14 @@ public class LikesServiceImpl implements LikesService {
         log.debug("Request to delete Likes : {}", id);
         likesRepository.deleteById(id);
     }
+
+    @Override
+    public int getPostLikesCount(Long postId) {
+        return likesRepository.getPostLikesCount(postId);
+    }
+
+    @Override
+    public boolean isLiked(Long postId, Long userId) {
+        return likesRepository.isLiked(postId, userId);
+    }
 }

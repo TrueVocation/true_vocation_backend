@@ -47,4 +47,6 @@ public interface FavoriteService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    boolean isFavorite(Long postId, Long userId);
 }

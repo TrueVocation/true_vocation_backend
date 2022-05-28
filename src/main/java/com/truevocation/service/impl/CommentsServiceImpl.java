@@ -73,4 +73,9 @@ public class CommentsServiceImpl implements CommentsService {
         log.debug("Request to delete Comments : {}", id);
         commentsRepository.deleteById(id);
     }
+
+    @Override
+    public int getPostCommentsCount(Long postId) {
+        return commentsRepository.getPostCommentsCount(postId);
+    }
 }

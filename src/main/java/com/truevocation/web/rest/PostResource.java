@@ -3,6 +3,7 @@ package com.truevocation.web.rest;
 import com.truevocation.repository.PostRepository;
 import com.truevocation.service.PostService;
 import com.truevocation.service.dto.PostDTO;
+import com.truevocation.service.dto.PostsPageDTO;
 import com.truevocation.service.dto.UniversityDTO;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
 
@@ -14,6 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -77,7 +79,7 @@ public class PostResource {
     /**
      * {@code PUT  /posts/:id} : Updates an existing post.
      *
-     * @param id the id of the postDTO to save.
+     * @param id      the id of the postDTO to save.
      * @param postDTO the postDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated postDTO,
      * or with status {@code 400 (Bad Request)} if the postDTO is not valid,
@@ -111,7 +113,7 @@ public class PostResource {
     /**
      * {@code PATCH  /posts/:id} : Partial updates given fields of an existing post, field will ignore if it is null
      *
-     * @param id the id of the postDTO to save.
+     * @param id      the id of the postDTO to save.
      * @param postDTO the postDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated postDTO,
      * or with status {@code 400 (Bad Request)} if the postDTO is not valid,
@@ -119,7 +121,7 @@ public class PostResource {
      * or with status {@code 500 (Internal Server Error)} if the postDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/posts/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/posts/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<PostDTO> partialUpdatePost(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody PostDTO postDTO
@@ -158,6 +160,15 @@ public class PostResource {
         return ResponseEntity.ok().headers(headers).body(page);
     }
 
+    @GetMapping("/posts-page")
+    public ResponseEntity<PostsPageDTO> getAllPostsByQuery(@org.springdoc.api.annotations.ParameterObject Pageable pageable,
+                                                           @RequestParam(value = "searchText", defaultValue = "") String searchText) {
+        log.debug("REST request to get a page of Posts");
+        PostsPageDTO page = postService.findAllForPostsPage(searchText, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page.getLatestPosts());
+        return ResponseEntity.ok().headers(headers).body(page);
+    }
+
     /**
      * {@code GET  /posts/:id} : get the "id" post.
      *
@@ -190,18 +201,18 @@ public class PostResource {
     @PostMapping(value = "/posts/uploadPicture")
 //    @PreAuthorize("hasRole(ROLE_ADMIN)")
     public ResponseEntity<PostDTO> uploadPicture(@RequestParam(name = "picture") MultipartFile file,
-                                                       @RequestParam(name = "post_id")Long postId){
+                                                 @RequestParam(name = "post_id") Long postId) {
         PostDTO postDTO = postService.uploadPicture(file, postId);
-        if(!Objects.isNull(postDTO)){
+        if (!Objects.isNull(postDTO)) {
             return ResponseEntity.ok(postDTO);
         }
         return ResponseEntity.badRequest().build();
     }
 
 
-    @GetMapping(value = "/posts/viewPicture",produces = {MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE})
+    @GetMapping(value = "/posts/viewPicture", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     @PreAuthorize("isAnonymous() || isAuthenticated()")
-    public ResponseEntity<byte[]> viewUniversityPicture(@RequestParam(name = "url")String url) throws IOException {
+    public ResponseEntity<byte[]> viewUniversityPicture(@RequestParam(name = "url") String url) throws IOException {
         return postService.getPicture(url);
     }
 }

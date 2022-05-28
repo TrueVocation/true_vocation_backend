@@ -1,6 +1,7 @@
 package com.truevocation.service;
 
 import com.truevocation.service.dto.PostDTO;
+import com.truevocation.service.dto.PostsPageDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -58,4 +59,6 @@ public interface PostService {
     ResponseEntity<byte[]> getPicture(String url) throws IOException;
 
     HttpHeaders addCustomPaginationHeaders(HttpHeaders headers, Page<PostDTO> page);
+
+    PostsPageDTO findAllForPostsPage(String searchText, Pageable pageable);
 }
