@@ -19,4 +19,6 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
                     "where likes.post.id = :postId and " +
                     "likes.user.id = :userId")
     boolean isLiked(@Param("postId")Long postId, @Param("userId")Long userId);
+
+    Likes findByUserIdAndPostId(Long userId, Long postId);
 }

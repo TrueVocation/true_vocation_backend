@@ -1,17 +1,32 @@
 package com.truevocation.service.impl;
 
 import com.truevocation.domain.Favorite;
+import com.truevocation.domain.Likes;
 import com.truevocation.repository.FavoriteRepository;
+import com.truevocation.service.AppUserService;
 import com.truevocation.service.FavoriteService;
+import com.truevocation.service.PostService;
+import com.truevocation.service.dto.AppUserDTO;
 import com.truevocation.service.dto.FavoriteDTO;
+import com.truevocation.service.dto.PostDTO;
+import com.truevocation.service.mapper.AppUserMapper;
 import com.truevocation.service.mapper.FavoriteMapper;
+
+import java.util.Objects;
 import java.util.Optional;
+
+import com.truevocation.service.mapper.PostMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityNotFoundException;
 
 /**
  * Service Implementation for managing {@link Favorite}.
@@ -25,6 +40,18 @@ public class FavoriteServiceImpl implements FavoriteService {
     private final FavoriteRepository favoriteRepository;
 
     private final FavoriteMapper favoriteMapper;
+
+    @Autowired
+    private AppUserService appUserService;
+
+    @Autowired
+    private PostService postService;
+
+    @Autowired
+    private PostMapper postMapper;
+
+    @Autowired
+    private AppUserMapper appUserMapper;
 
     public FavoriteServiceImpl(FavoriteRepository favoriteRepository, FavoriteMapper favoriteMapper) {
         this.favoriteRepository = favoriteRepository;
@@ -77,5 +104,28 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     public boolean isFavorite(Long postId, Long userId) {
         return favoriteRepository.isFavorite(postId, userId);
+    }
+
+    @Override
+    public ResponseEntity<Void> setPostFavorite(Long userId, Long postId) {
+        AppUserDTO appUser = appUserService.findByUserId(userId).orElse(null);
+        if(Objects.isNull(appUser)){
+            throw new EntityNotFoundException("App user not found");
+        }
+        PostDTO postDTO = postService.findOne(postId).orElse(null);
+        if(Objects.isNull(postDTO)){
+            throw new EntityNotFoundException("Post not found");
+        }
+        Favorite favorite = favoriteRepository.findByUserIdAndPostId(userId, postId);
+        if(!Objects.isNull(favorite)){
+            favoriteRepository.delete(favorite);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
+            favorite = new Favorite();
+            favorite.setPost(postMapper.toEntity(postDTO));
+            favorite.setUser(appUserMapper.toEntity(appUser));
+            favoriteRepository.save(favorite);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
     }
 }
