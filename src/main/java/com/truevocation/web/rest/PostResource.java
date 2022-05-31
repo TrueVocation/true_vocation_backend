@@ -215,4 +215,11 @@ public class PostResource {
     public ResponseEntity<byte[]> viewUniversityPicture(@RequestParam(name = "url") String url) throws IOException {
         return postService.getPicture(url);
     }
+
+    @GetMapping("/posts/{id}/details")
+    public ResponseEntity<PostDTO> getPostById(@PathVariable Long id) {
+        log.debug("REST request to get Post : {}", id);
+        Optional<PostDTO> postDTO = postService.findOneWithEagerRelations(id);
+        return ResponseUtil.wrapOrNotFound(postDTO);
+    }
 }

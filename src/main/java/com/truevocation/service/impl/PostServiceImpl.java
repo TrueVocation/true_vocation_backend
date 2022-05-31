@@ -121,6 +121,24 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Optional<PostDTO> findOneWithEagerRelations(Long id) {
+        log.debug("Request to get Post : {}", id);
+        User user = userService.getUserWithAuthorities().orElse(null);
+        return postRepository.findById(id)
+            .map(postMapper::toDto)
+            .map(postDTO -> {
+            postDTO.setLikeCount(likesService.getPostLikesCount(postDTO.getId()));
+            postDTO.setCommentCount(commentsService.getPostCommentsCount(postDTO.getId()));
+            if(!Objects.isNull(user)){
+                postDTO.setLiked(likesService.isLiked(postDTO.getId(), user.getId()));
+                postDTO.setFavorite(favoriteService.isFavorite(postDTO.getId(), user.getId()));
+            }
+            return postDTO;
+        });
+    }
+
+    @Override
     public void delete(Long id) {
         log.debug("Request to delete Post : {}", id);
         postRepository.deleteById(id);

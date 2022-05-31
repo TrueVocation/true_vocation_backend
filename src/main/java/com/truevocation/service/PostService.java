@@ -61,4 +61,6 @@ public interface PostService {
     HttpHeaders addCustomPaginationHeaders(HttpHeaders headers, Page<PostDTO> page);
 
     PostsPageDTO findAllForPostsPage(String searchText, Pageable pageable);
+
+    Optional<PostDTO> findOneWithEagerRelations(Long id);
 }

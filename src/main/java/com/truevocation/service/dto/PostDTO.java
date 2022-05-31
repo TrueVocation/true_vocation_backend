@@ -2,6 +2,7 @@ package com.truevocation.service.dto;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import javax.validation.constraints.*;
 
@@ -33,6 +34,8 @@ public class PostDTO implements Serializable {
     private Boolean isLiked = Boolean.FALSE;
 
     private Boolean isFavorite = Boolean.FALSE;
+
+    private List<CommentsDTO> commentsList;
 
     public Long getId() {
         return id;
