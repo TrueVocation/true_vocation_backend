@@ -61,4 +61,6 @@ public interface AppUserService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    boolean checkUserExistence(String phoneNumber);
 }

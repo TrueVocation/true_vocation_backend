@@ -112,4 +112,9 @@ public class AppUserServiceImpl implements AppUserService {
         log.debug("Request to delete AppUser : {}", id);
         appUserRepository.deleteById(id);
     }
+
+    @Override
+    public boolean checkUserExistence(String phoneNumber) {
+        return appUserRepository.findAppUserByPhoneNumber(phoneNumber).isPresent();
+    }
 }

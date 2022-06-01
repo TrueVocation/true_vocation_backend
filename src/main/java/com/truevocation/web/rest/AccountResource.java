@@ -277,6 +277,16 @@ public class AccountResource {
         mailService.sendActivationEmail(user);
     }
 
+    @PostMapping("/check-email")
+    public boolean checkEmail(@Valid @RequestParam String email ) {
+        return userService.checkEmail(email);
+    }
+
+    @PostMapping("/check-login")
+    public boolean checkLogin(@Valid @RequestParam String login ) {
+        return userService.checkLogin(login);
+    }
+
     @PostMapping("/update-profile")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserAccountDto> updateProfile(@RequestBody UserAccountDto userAccountDto) {

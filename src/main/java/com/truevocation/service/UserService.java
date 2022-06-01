@@ -5,6 +5,7 @@ import com.truevocation.config.Constants;
 import com.truevocation.domain.AppUser;
 import com.truevocation.domain.Authority;
 import com.truevocation.domain.User;
+import com.truevocation.repository.AppUserRepository;
 import com.truevocation.repository.AuthorityRepository;
 import com.truevocation.repository.UserRepository;
 import com.truevocation.security.AuthoritiesConstants;
@@ -64,6 +65,9 @@ public class UserService {
 
     @Autowired
     private AppUserService appUserService;
+
+    @Autowired
+    private AppUserRepository appUserRepository;
 
     @Autowired
     private UserMapper userMapper;
@@ -225,10 +229,24 @@ public class UserService {
         if (existingUser.isActivated()) {
             return false;
         }
+        deleteAppUserWithUserId(existingUser.getId());
         userRepository.delete(existingUser);
         userRepository.flush();
         this.clearUserCaches(existingUser);
         return true;
+    }
+
+    private void deleteAppUserWithUserId(Long id) {
+        Optional<AppUser> appUser = appUserRepository.findAppUserByUserId(id);
+        appUser.ifPresent(user -> appUserRepository.delete(user));
+    }
+
+    public boolean checkEmail(String email) {
+        return userRepository.findOneByEmailIgnoreCase(email).isPresent();
+    }
+
+    public boolean checkLogin(String login) {
+        return userRepository.findOneByLogin(login).isPresent();
     }
 
     public User createUser(AdminUserDTO userDTO) {
