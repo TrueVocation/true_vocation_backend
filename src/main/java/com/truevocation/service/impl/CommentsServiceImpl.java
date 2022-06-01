@@ -5,6 +5,8 @@ import com.truevocation.repository.CommentsRepository;
 import com.truevocation.service.CommentsService;
 import com.truevocation.service.dto.CommentsDTO;
 import com.truevocation.service.mapper.CommentsMapper;
+
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,5 +79,10 @@ public class CommentsServiceImpl implements CommentsService {
     @Override
     public int getPostCommentsCount(Long postId) {
         return commentsRepository.getPostCommentsCount(postId);
+    }
+
+    @Override
+    public List<Comments> getPostComments(Long postID) {
+        return commentsRepository.getPostComments(postID);
     }
 }

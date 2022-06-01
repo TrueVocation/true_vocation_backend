@@ -498,4 +498,9 @@ public class UserService {
             return "image/png";
         }
     }
+
+    public UserDTO getUserById(Long id){
+        User user = userRepository.getById(id);
+        return userMapper.userToUserDTO(user);
+    }
 }

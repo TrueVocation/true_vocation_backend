@@ -37,6 +37,14 @@ public class PostDTO implements Serializable {
 
     private List<CommentsDTO> commentsList;
 
+    public List<CommentsDTO> getCommentsList() {
+        return commentsList;
+    }
+
+    public void setCommentsList(List<CommentsDTO> commentsList) {
+        this.commentsList = commentsList;
+    }
+
     public Long getId() {
         return id;
     }

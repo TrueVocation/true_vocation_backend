@@ -1,14 +1,15 @@
 package com.truevocation.service.impl;
 
 import com.github.dockerjava.api.exception.InternalServerErrorException;
+import com.truevocation.domain.Comments;
 import com.truevocation.domain.Post;
 import com.truevocation.domain.University;
 import com.truevocation.domain.User;
 import com.truevocation.repository.PostRepository;
 import com.truevocation.service.*;
-import com.truevocation.service.dto.PostDTO;
-import com.truevocation.service.dto.PostsPageDTO;
-import com.truevocation.service.dto.UniversityDTO;
+import com.truevocation.service.dto.*;
+import com.truevocation.service.mapper.AppUserMapper;
+import com.truevocation.service.mapper.CommentsMapper;
 import com.truevocation.service.mapper.PostMapper;
 
 import java.io.FileInputStream;
@@ -21,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.truevocation.service.mapper.UserMapper;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +62,15 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private FavoriteService favoriteService;
+
+    @Autowired
+    private CommentsMapper commentsMapper;
+
+    @Autowired
+    private AppUserMapper appUserMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Value("${file.posts.viewPath}")
     private String viewPathPicture;
@@ -134,8 +145,24 @@ public class PostServiceImpl implements PostService {
                 postDTO.setLiked(likesService.isLiked(postDTO.getId(), user.getId()));
                 postDTO.setFavorite(favoriteService.isFavorite(postDTO.getId(), user.getId()));
             }
+            postDTO.setCommentsList(getPostComments(id));
             return postDTO;
         });
+    }
+
+    private List<CommentsDTO> getPostComments(Long postId){
+        List<Comments> comments = commentsService.getPostComments(postId);
+        return comments.stream()
+            .map(comment -> {
+                CommentsDTO commentsDTO = new CommentsDTO();
+                commentsDTO.setId(comment.getId());
+                commentsDTO.setText(comment.getText());
+                commentsDTO.setAddedDate(comment.getAddedDate());
+                commentsDTO.setUser(appUserMapper.toDto(comment.getUser()));
+                commentsDTO.setUserDTO(userMapper.appUserToUserDTO(comment.getUser()));
+                commentsDTO.setUser(null);
+                return commentsDTO;
+            }).collect(Collectors.toList());
     }
 
     @Override
@@ -252,6 +279,4 @@ public class PostServiceImpl implements PostService {
         postsPageDTO.setLatestPosts(latestPostsPage);
         return postsPageDTO;
     }
-
-
 }
