@@ -2,15 +2,16 @@ package com.truevocation.service;
 
 import com.github.dockerjava.api.exception.InternalServerErrorException;
 import com.truevocation.config.Constants;
+import com.truevocation.domain.AppUser;
 import com.truevocation.domain.Authority;
-import com.truevocation.domain.University;
 import com.truevocation.domain.User;
+import com.truevocation.repository.AppUserRepository;
 import com.truevocation.repository.AuthorityRepository;
 import com.truevocation.repository.UserRepository;
 import com.truevocation.security.AuthoritiesConstants;
 import com.truevocation.security.SecurityUtils;
 import com.truevocation.service.dto.AdminUserDTO;
-import com.truevocation.service.dto.UniversityDTO;
+import com.truevocation.service.dto.AppUserDTO;
 import com.truevocation.service.dto.UserDTO;
 
 import java.io.FileInputStream;
@@ -24,9 +25,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.truevocation.service.mapper.UserMapper;
+import com.truevocation.web.rest.vm.UserAccountDto;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
@@ -58,6 +62,15 @@ public class UserService {
     private final AuthorityRepository authorityRepository;
 
     private final CacheManager cacheManager;
+
+    @Autowired
+    private AppUserService appUserService;
+
+    @Autowired
+    private AppUserRepository appUserRepository;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Value("${file.avatar.viewPath}")
     private String viewPathAvatar;
@@ -121,6 +134,55 @@ public class UserService {
             });
     }
 
+    public User registerUserAccount(UserAccountDto userAccountDto, String password) {
+        userRepository
+            .findOneByLogin(userAccountDto.getLogin().toLowerCase())
+            .ifPresent(existingUser -> {
+                boolean removed = removeNonActivatedUser(existingUser);
+                if (!removed) {
+                    throw new UsernameAlreadyUsedException();
+                }
+            });
+        userRepository
+            .findOneByEmailIgnoreCase(userAccountDto.getEmail())
+            .ifPresent(existingUser -> {
+                boolean removed = removeNonActivatedUser(existingUser);
+                if (!removed) {
+                    throw new EmailAlreadyUsedException();
+                }
+            });
+        User newUser = new User();
+
+        String encryptedPassword = passwordEncoder.encode(password);
+        newUser.setLogin(userAccountDto.getLogin().toLowerCase());
+        // new user gets initially a generated password
+        newUser.setPassword(encryptedPassword);
+        newUser.setFirstName(userAccountDto.getFirstName());
+        newUser.setLastName(userAccountDto.getLastName());
+        if (userAccountDto.getEmail() != null) {
+            newUser.setEmail(userAccountDto.getEmail().toLowerCase());
+        }
+        newUser.setImageUrl(userAccountDto.getImageUrl());
+        newUser.setLangKey(userAccountDto.getLangKey());
+        // new user is not active
+        newUser.setActivated(false);
+        // new user gets registration key
+        newUser.setActivationKey(RandomUtil.generateActivationKey());
+        Set<Authority> authorities = new HashSet<>();
+        authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
+        newUser.setAuthorities(authorities);
+        newUser = userRepository.save(newUser);
+        AppUserDTO appUserDTO = new AppUserDTO();
+        appUserDTO.setBirthdate(userAccountDto.getBirthdate());
+        appUserDTO.setPhoneNumber(userAccountDto.getPhoneNumber());
+        appUserDTO.setUser(userMapper.userToUserDTO(newUser));
+        appUserService.save(appUserDTO);
+        this.clearUserCaches(newUser);
+        log.debug("Created Information for User: {}", newUser);
+        return newUser;
+    }
+
+
     public User registerUser(AdminUserDTO userDTO, String password) {
         userRepository
             .findOneByLogin(userDTO.getLogin().toLowerCase())
@@ -167,10 +229,24 @@ public class UserService {
         if (existingUser.isActivated()) {
             return false;
         }
+        deleteAppUserWithUserId(existingUser.getId());
         userRepository.delete(existingUser);
         userRepository.flush();
         this.clearUserCaches(existingUser);
         return true;
+    }
+
+    private void deleteAppUserWithUserId(Long id) {
+        Optional<AppUser> appUser = appUserRepository.findAppUserByUserId(id);
+        appUser.ifPresent(user -> appUserRepository.delete(user));
+    }
+
+    public boolean checkEmail(String email) {
+        return userRepository.findOneByEmailIgnoreCase(email).isPresent();
+    }
+
+    public boolean checkLogin(String login) {
+        return userRepository.findOneByLogin(login).isPresent();
     }
 
     public User createUser(AdminUserDTO userDTO) {
@@ -244,6 +320,30 @@ public class UserService {
                 return user;
             })
             .map(AdminUserDTO::new);
+    }
+
+    @Transactional
+    public UserAccountDto updateProfile(UserAccountDto userAccountDto) {
+        User user = userRepository.findOneByLogin(userAccountDto.getLogin()).orElse(null);
+        if(Objects.isNull(user)){
+            throw new EntityNotFoundException("User not found");
+        }
+        updateUser(
+            userAccountDto.getFirstName(),
+            userAccountDto.getLastName(),
+            userAccountDto.getEmail(),
+            user.getLangKey(),
+            user.getImageUrl()
+        );
+        AppUserDTO appUser =  appUserService.findByUserId(user.getId()).orElse(null);
+        if(Objects.isNull(appUser)){
+            throw new EntityNotFoundException("User not found");
+        }
+        appUser.setBirthdate(userAccountDto.getBirthdate());
+        appUser.setPhoneNumber(userAccountDto.getPhoneNumber());
+        appUserService.save(appUser);
+
+        return userAccountDto;
     }
 
     public void deleteUser(String login) {
@@ -415,5 +515,10 @@ public class UserService {
         }else {
             return "image/png";
         }
+    }
+
+    public UserDTO getUserById(Long id){
+        User user = userRepository.getById(id);
+        return userMapper.userToUserDTO(user);
     }
 }

@@ -178,4 +178,13 @@ public class CommentsResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    @PostMapping("/comments/post")
+    public ResponseEntity<Void> userPostComment(@RequestBody CommentsDTO commentsDTO) {
+        CommentsDTO commentsDTO1 = commentsService.addUserComment(commentsDTO);
+        if(Objects.isNull(commentsDTO1)){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
 }

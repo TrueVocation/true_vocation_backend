@@ -3,7 +3,11 @@ package com.truevocation.web.rest;
 import com.truevocation.repository.PostRepository;
 import com.truevocation.service.PostService;
 import com.truevocation.service.dto.PostDTO;
+import com.truevocation.service.dto.PostsPageDTO;
+import com.truevocation.service.dto.UniversityDTO;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
+
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -11,6 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,8 +23,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -71,7 +79,7 @@ public class PostResource {
     /**
      * {@code PUT  /posts/:id} : Updates an existing post.
      *
-     * @param id the id of the postDTO to save.
+     * @param id      the id of the postDTO to save.
      * @param postDTO the postDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated postDTO,
      * or with status {@code 400 (Bad Request)} if the postDTO is not valid,
@@ -105,7 +113,7 @@ public class PostResource {
     /**
      * {@code PATCH  /posts/:id} : Partial updates given fields of an existing post, field will ignore if it is null
      *
-     * @param id the id of the postDTO to save.
+     * @param id      the id of the postDTO to save.
      * @param postDTO the postDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated postDTO,
      * or with status {@code 400 (Bad Request)} if the postDTO is not valid,
@@ -113,7 +121,7 @@ public class PostResource {
      * or with status {@code 500 (Internal Server Error)} if the postDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/posts/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/posts/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<PostDTO> partialUpdatePost(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody PostDTO postDTO
@@ -145,11 +153,20 @@ public class PostResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of posts in body.
      */
     @GetMapping("/posts")
-    public ResponseEntity<List<PostDTO>> getAllPosts(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<Page<PostDTO>> getAllPosts(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of Posts");
         Page<PostDTO> page = postService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity.ok().headers(headers).body(page);
+    }
+
+    @GetMapping("/posts-page")
+    public ResponseEntity<PostsPageDTO> getAllPostsByQuery(@org.springdoc.api.annotations.ParameterObject Pageable pageable,
+                                                           @RequestParam(value = "searchText", defaultValue = "") String searchText) {
+        log.debug("REST request to get a page of Posts");
+        PostsPageDTO page = postService.findAllForPostsPage(searchText, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page.getLatestPosts());
+        return ResponseEntity.ok().headers(headers).body(page);
     }
 
     /**
@@ -179,5 +196,30 @@ public class PostResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @PostMapping(value = "/posts/uploadPicture")
+//    @PreAuthorize("hasRole(ROLE_ADMIN)")
+    public ResponseEntity<PostDTO> uploadPicture(@RequestParam(name = "picture") MultipartFile file,
+                                                 @RequestParam(name = "post_id") Long postId) {
+        PostDTO postDTO = postService.uploadPicture(file, postId);
+        if (!Objects.isNull(postDTO)) {
+            return ResponseEntity.ok(postDTO);
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+
+    @GetMapping(value = "/posts/viewPicture", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+    @PreAuthorize("isAnonymous() || isAuthenticated()")
+    public ResponseEntity<byte[]> viewUniversityPicture(@RequestParam(name = "url") String url) throws IOException {
+        return postService.getPicture(url);
+    }
+
+    @GetMapping("/posts/{id}/details")
+    public ResponseEntity<PostDTO> getPostById(@PathVariable Long id) {
+        log.debug("REST request to get Post : {}", id);
+        Optional<PostDTO> postDTO = postService.findOneWithEagerRelations(id);
+        return ResponseUtil.wrapOrNotFound(postDTO);
     }
 }

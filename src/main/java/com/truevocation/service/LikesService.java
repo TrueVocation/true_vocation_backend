@@ -4,6 +4,7 @@ import com.truevocation.service.dto.LikesDTO;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Service Interface for managing {@link com.truevocation.domain.Likes}.
@@ -47,4 +48,11 @@ public interface LikesService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    int getPostLikesCount(Long postId);
+
+    boolean isLiked(Long postId, Long userId);
+
+    ResponseEntity<Void> setPostLike(Long appUserId, Long postId);
+
 }

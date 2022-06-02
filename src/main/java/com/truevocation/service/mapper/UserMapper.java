@@ -1,5 +1,6 @@
 package com.truevocation.service.mapper;
 
+import com.truevocation.domain.AppUser;
 import com.truevocation.domain.Authority;
 import com.truevocation.domain.User;
 import com.truevocation.service.dto.AdminUserDTO;
@@ -26,6 +27,10 @@ public class UserMapper {
 
     public UserDTO userToUserDTO(User user) {
         return new UserDTO(user);
+    }
+
+    public UserDTO appUserToUserDTO(AppUser appUser) {
+        return new UserDTO(appUser);
     }
 
     public List<AdminUserDTO> usersToAdminUserDTOs(List<User> users) {

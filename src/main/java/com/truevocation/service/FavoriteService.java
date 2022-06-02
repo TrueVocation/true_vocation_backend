@@ -4,6 +4,7 @@ import com.truevocation.service.dto.FavoriteDTO;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Service Interface for managing {@link com.truevocation.domain.Favorite}.
@@ -47,4 +48,8 @@ public interface FavoriteService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    boolean isFavorite(Long postId, Long userId);
+
+    ResponseEntity<Void> setPostFavorite(Long userId, Long postId);
 }

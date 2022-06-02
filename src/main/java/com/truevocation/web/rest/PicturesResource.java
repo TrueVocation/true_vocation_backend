@@ -76,7 +76,7 @@ public class PicturesResource {
 
     @GetMapping(value = "/viewPicture",produces = {MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE})
     @PreAuthorize("isAnonymous() || isAuthenticated()")
-    public ResponseEntity<byte[]> viewItemPicture(@RequestParam(name = "url")String url) throws IOException, URISyntaxException {
+    public ResponseEntity<byte[]> viewPicture(@RequestParam(name = "url")String url) throws IOException, URISyntaxException {
         return picturesService.getPictureByUrl(url);
     }
 

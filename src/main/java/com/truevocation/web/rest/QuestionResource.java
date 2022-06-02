@@ -192,6 +192,7 @@ public class QuestionResource {
 //            headers.add(HttpHeaders.LINK, link.toString());
 //        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        headers.add("pagination", String.valueOf(page));
         return ResponseEntity.ok().headers(headers).body(page);
     }
 

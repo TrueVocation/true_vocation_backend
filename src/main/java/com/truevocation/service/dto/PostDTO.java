@@ -2,6 +2,7 @@ package com.truevocation.service.dto;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import javax.validation.constraints.*;
 
@@ -14,6 +15,8 @@ public class PostDTO implements Serializable {
 
     private String title;
 
+    private String tag;
+
     @Size(max = 1000)
     private String shortDescription;
 
@@ -23,6 +26,24 @@ public class PostDTO implements Serializable {
     private String picture;
 
     private LocalDate createdDate;
+
+    private Integer likeCount;
+
+    private Integer commentCount;
+
+    private Boolean isLiked = Boolean.FALSE;
+
+    private Boolean isFavorite = Boolean.FALSE;
+
+    private List<CommentsDTO> commentsList;
+
+    public List<CommentsDTO> getCommentsList() {
+        return commentsList;
+    }
+
+    public void setCommentsList(List<CommentsDTO> commentsList) {
+        this.commentsList = commentsList;
+    }
 
     public Long getId() {
         return id;
@@ -72,6 +93,46 @@ public class PostDTO implements Serializable {
         this.createdDate = createdDate;
     }
 
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public Integer getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(Integer likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public Integer getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(Integer commentCount) {
+        this.commentCount = commentCount;
+    }
+
+    public Boolean getLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(Boolean liked) {
+        isLiked = liked;
+    }
+
+    public Boolean getFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(Boolean favorite) {
+        isFavorite = favorite;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -94,15 +155,17 @@ public class PostDTO implements Serializable {
     }
 
     // prettier-ignore
+
     @Override
     public String toString() {
         return "PostDTO{" +
-            "id=" + getId() +
-            ", title='" + getTitle() + "'" +
-            ", shortDescription='" + getShortDescription() + "'" +
-            ", description='" + getDescription() + "'" +
-            ", picture='" + getPicture() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            "}";
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", tag='" + tag + '\'' +
+            ", shortDescription='" + shortDescription + '\'' +
+            ", description='" + description + '\'' +
+            ", picture='" + picture + '\'' +
+            ", createdDate=" + createdDate +
+            '}';
     }
 }
