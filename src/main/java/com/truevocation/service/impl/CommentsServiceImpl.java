@@ -1,19 +1,33 @@
 package com.truevocation.service.impl;
 
+import com.truevocation.domain.AppUser;
 import com.truevocation.domain.Comments;
+import com.truevocation.domain.Post;
+import com.truevocation.domain.User;
 import com.truevocation.repository.CommentsRepository;
+import com.truevocation.service.AppUserService;
 import com.truevocation.service.CommentsService;
+import com.truevocation.service.PostService;
+import com.truevocation.service.UserService;
+import com.truevocation.service.dto.AppUserDTO;
 import com.truevocation.service.dto.CommentsDTO;
+import com.truevocation.service.dto.PostDTO;
+import com.truevocation.service.dto.UserDTO;
 import com.truevocation.service.mapper.CommentsMapper;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityNotFoundException;
 
 /**
  * Service Implementation for managing {@link Comments}.
@@ -27,6 +41,15 @@ public class CommentsServiceImpl implements CommentsService {
     private final CommentsRepository commentsRepository;
 
     private final CommentsMapper commentsMapper;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private PostService postService;
+
+    @Autowired
+    private AppUserService appUserService;
 
     public CommentsServiceImpl(CommentsRepository commentsRepository, CommentsMapper commentsMapper) {
         this.commentsRepository = commentsRepository;
@@ -84,5 +107,28 @@ public class CommentsServiceImpl implements CommentsService {
     @Override
     public List<Comments> getPostComments(Long postID) {
         return commentsRepository.getPostComments(postID);
+    }
+
+    @Override
+    public CommentsDTO addUserComment(CommentsDTO commentsDTO) {
+        AppUserDTO appUserDTO = appUserService.findByUserId(commentsDTO.getUserDTO().getId()).orElse(null);
+        if(!Objects.isNull(appUserDTO)){
+            PostDTO postDTO = postService.findOne(commentsDTO.getPost().getId()).orElse(null);
+            if(Objects.isNull(postDTO)){
+                throw new EntityNotFoundException("post not found");
+            }
+            Comments comments = new Comments();
+            Post post = new Post();
+            post.setId(postDTO.getId());
+            AppUser appUser = new AppUser();
+            appUser.setId(appUserDTO.getId());
+            comments.setAddedDate(LocalDate.now());
+            comments.setPost(post);
+            comments.setUser(appUser);
+            comments.setText(commentsDTO.getText());
+            Comments comments1 =  commentsRepository.save(comments);
+            return commentsMapper.toDto(comments1);
+        }
+        return null;
     }
 }

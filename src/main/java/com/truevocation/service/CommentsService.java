@@ -54,4 +54,6 @@ public interface CommentsService {
     int getPostCommentsCount(Long postId);
 
     List<Comments> getPostComments(Long postID);
+
+    CommentsDTO addUserComment(CommentsDTO commentsDTO);
 }
