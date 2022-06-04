@@ -500,7 +500,6 @@ public class UserService {
         }catch (Exception e){
             in = new FileInputStream(viewPathAvatar+defaultPicture);
             extension = "png";
-            e.printStackTrace();
         }
         String contentType = defineContentType(extension);
         byte[] content = Base64.getEncoder().encode(IOUtils.toByteArray(in));

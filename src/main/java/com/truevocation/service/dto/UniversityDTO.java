@@ -1,6 +1,7 @@
 package com.truevocation.service.dto;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -30,11 +31,32 @@ public class UniversityDTO implements Serializable {
 
     private String logo;
 
+    private String picture;
+
     private Set<FacultyDTO> faculties = new HashSet<>();
 
     private CityDTO city;
 
     private int SpecialityCount;
+
+    private HashMap<String, String> location;
+
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public HashMap<String, String> getLocation() {
+        return location;
+    }
+
+    public void setLocation(HashMap<String, String> location) {
+        this.location = location;
+    }
 
     public Long getId() {
         return id;

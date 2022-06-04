@@ -176,7 +176,6 @@ public class UniversityServiceImpl implements UniversityService {
         } catch (Exception e) {
             in = new FileInputStream(viewPathPicture + defaultPicture);
             extension = "png";
-            e.printStackTrace();
         }
         String contentType = defineContentType(extension);
         byte[] content = Base64.getEncoder().encode(IOUtils.toByteArray(in));

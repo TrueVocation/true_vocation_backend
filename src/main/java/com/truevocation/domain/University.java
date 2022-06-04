@@ -2,10 +2,13 @@ package com.truevocation.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import com.truevocation.service.converter.HashMapConverter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -49,6 +52,13 @@ public class University implements Serializable {
 
     @Column(name = "logo")
     private String logo;
+
+    @Column(name = "picture")
+    private String picture;
+
+    @Column(name = "location")
+    @Convert(converter = HashMapConverter.class)
+    private HashMap<String, String> location;
 
     @OneToMany(mappedBy = "university")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -97,6 +107,22 @@ public class University implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public HashMap<String, String> getLocation() {
+        return location;
+    }
+
+    public void setLocation(HashMap<String, String> location) {
+        this.location = location;
     }
 
     public String getName() {

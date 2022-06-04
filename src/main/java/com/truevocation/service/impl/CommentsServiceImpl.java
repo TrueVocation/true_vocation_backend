@@ -111,6 +111,14 @@ public class CommentsServiceImpl implements CommentsService {
 
     @Override
     public CommentsDTO addUserComment(CommentsDTO commentsDTO) {
+        if(!Objects.isNull(commentsDTO.getId())){
+            Comments comments = commentsRepository.findById(commentsDTO.getId()).orElse(null);
+            if(!Objects.isNull(comments)){
+                comments.setText(commentsDTO.getText());
+                commentsRepository.save(comments);
+                return commentsDTO;
+            }
+        }
         AppUserDTO appUserDTO = appUserService.findByUserId(commentsDTO.getUserDTO().getId()).orElse(null);
         if(!Objects.isNull(appUserDTO)){
             PostDTO postDTO = postService.findOne(commentsDTO.getPost().getId()).orElse(null);
