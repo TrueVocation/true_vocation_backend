@@ -3,6 +3,7 @@ package com.truevocation.web.rest;
 import com.truevocation.repository.UniversityRepository;
 import com.truevocation.service.UniversityService;
 import com.truevocation.service.dto.UniversityDTO;
+import com.truevocation.service.dto.UniversityFilterDto;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,6 +166,14 @@ public class UniversityResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
+    @PostMapping("/universities/filter")
+    public ResponseEntity<List<UniversityDTO>> getAllUniversitiesByFilter(@RequestBody UniversityFilterDto universityFilterDto) {
+        log.debug("REST request to get a list of all Universities by Filter");
+        List<UniversityDTO> list = universityService.findAllByFilter(universityFilterDto);
+        return ResponseEntity.ok().body(list);
+    }
+
+
     @GetMapping("/universities-by-speciality/{id}")
     public ResponseEntity<List<UniversityDTO>> getAllUniversitiesBySpeciality(
         @org.springdoc.api.annotations.ParameterObject Pageable pageable,
@@ -207,8 +216,9 @@ public class UniversityResource {
     @PostMapping(value = "/universities/uploadPicture")
 //    @PreAuthorize("hasRole(ROLE_ADMIN)")
     public ResponseEntity<UniversityDTO> uploadPicture(@RequestParam(name = "picture") MultipartFile file,
-                                                       @RequestParam(name = "university_id") Long universityId) {
-        UniversityDTO universityDTO = universityService.saveLogo(file, universityId);
+                                                       @RequestParam(name = "university_id") Long universityId,
+                                                       @RequestParam(name = "isLogo", defaultValue = "true") boolean isLogo) {
+        UniversityDTO universityDTO = universityService.saveLogo(file, universityId, isLogo);
         if (!Objects.isNull(universityDTO)) {
             return ResponseEntity.ok(universityDTO);
         }
@@ -220,5 +230,11 @@ public class UniversityResource {
     @PreAuthorize("isAnonymous() || isAuthenticated()")
     public ResponseEntity<byte[]> viewItemPicture(@RequestParam(name = "url") String url) throws IOException {
         return universityService.getLogoByUrl(url);
+    }
+
+    @GetMapping(value = "/universities/getPictures/{id}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+    @PreAuthorize("isAnonymous() || isAuthenticated()")
+    public ResponseEntity<byte[]> getPictures(@PathVariable("id")Long id) throws IOException {
+        return universityService.getPictures(id);
     }
 }

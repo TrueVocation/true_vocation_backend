@@ -41,6 +41,15 @@ public class UniversityDTO implements Serializable {
 
     private HashMap<String, String> location;
 
+    private Integer averagePrice;
+
+    public Integer getAveragePrice() {
+        return averagePrice;
+    }
+
+    public void setAveragePrice(Integer averagePrice) {
+        this.averagePrice = averagePrice;
+    }
 
     public String getPicture() {
         return picture;

@@ -54,4 +54,10 @@ public interface UniversityRepository extends JpaRepository<University, Long> {
     Optional<University> findOneWithEagerRelationships(@Param("id") Long id);
 
     University findByLogoEquals(String logoUrl);
+
+    @Query(value = "select avg(s.price) from specialty s " +
+        "inner join faculty f on f.id = s.faculty_id " +
+        "inner join rel_university__faculty ruf on f.id = ruf.faculty_id " +
+        "where ruf.university_id = :universityId", nativeQuery = true)
+    Integer getAveragePrice(@Param("universityId") Long universityId);
 }

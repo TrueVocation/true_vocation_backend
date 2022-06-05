@@ -136,6 +136,7 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+    static-path-pattern: /api/static/**
   task:
     execution:
       thread-name-prefix: truevocation-task-
@@ -214,6 +215,7 @@ jhipster:
 truevocation:
   is-production: false
 
+
 file:
   avatar:
     uploadPath: src/main/resources/static/avatars/
@@ -222,6 +224,8 @@ file:
   university:
     uploadPath: src/main/resources/static/university/
     viewPath: src/main/resources/static/university/
+    uploadPathPicture: src/main/resources/static/university/picture/
+    viewPathPicture: src/main/resources/static/university/picture/
     defaultPicture: default.png
   posts:
     uploadPath: src/main/resources/static/posts/
