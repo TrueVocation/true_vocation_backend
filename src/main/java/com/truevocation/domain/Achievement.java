@@ -35,11 +35,23 @@ public class Achievement implements Serializable {
     @Column(name = "orientation")
     private String orientation;
 
+    @Column(name = "picture")
+    private String picture;
+
     @ManyToOne
     @JsonIgnoreProperties(value = { "appUser", "contacts", "achievements", "pictures", "languages", "schools" }, allowSetters = true)
     private Portfolio portfolio;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
 
     public Long getId() {
         return this.id;

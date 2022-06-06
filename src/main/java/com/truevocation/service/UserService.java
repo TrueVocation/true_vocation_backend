@@ -4,6 +4,7 @@ import com.github.dockerjava.api.exception.InternalServerErrorException;
 import com.truevocation.config.Constants;
 import com.truevocation.domain.AppUser;
 import com.truevocation.domain.Authority;
+import com.truevocation.domain.Portfolio;
 import com.truevocation.domain.User;
 import com.truevocation.repository.AppUserRepository;
 import com.truevocation.repository.AuthorityRepository;
@@ -12,6 +13,7 @@ import com.truevocation.security.AuthoritiesConstants;
 import com.truevocation.security.SecurityUtils;
 import com.truevocation.service.dto.AdminUserDTO;
 import com.truevocation.service.dto.AppUserDTO;
+import com.truevocation.service.dto.PortfolioDTO;
 import com.truevocation.service.dto.UserDTO;
 
 import java.io.FileInputStream;
@@ -25,8 +27,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.truevocation.service.mapper.AppUserMapper;
 import com.truevocation.service.mapper.UserMapper;
 import com.truevocation.web.rest.vm.UserAccountDto;
+import liquibase.pro.packaged.P;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +75,12 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private PortfolioService portfolioService;
+
+    @Autowired
+    private AppUserMapper appUserMapper;
 
     @Value("${file.avatar.viewPath}")
     private String viewPathAvatar;
@@ -176,7 +186,10 @@ public class UserService {
         appUserDTO.setBirthdate(userAccountDto.getBirthdate());
         appUserDTO.setPhoneNumber(userAccountDto.getPhoneNumber());
         appUserDTO.setUser(userMapper.userToUserDTO(newUser));
-        appUserService.save(appUserDTO);
+        AppUserDTO saved = appUserService.save(appUserDTO);
+        PortfolioDTO portfolio = new PortfolioDTO();
+        portfolio.setAppUser(saved);
+        portfolioService.save(portfolio);
         this.clearUserCaches(newUser);
         log.debug("Created Information for User: {}", newUser);
         return newUser;
@@ -230,6 +243,7 @@ public class UserService {
             return false;
         }
         deleteAppUserWithUserId(existingUser.getId());
+        portfolioService.deleteByUserId(existingUser.getId());
         userRepository.delete(existingUser);
         userRepository.flush();
         this.clearUserCaches(existingUser);

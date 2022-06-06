@@ -3,7 +3,10 @@ package com.truevocation.web.rest;
 import com.truevocation.repository.AchievementRepository;
 import com.truevocation.service.AchievementService;
 import com.truevocation.service.dto.AchievementDTO;
+import com.truevocation.service.dto.PostDTO;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
+
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -16,8 +19,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -177,5 +183,23 @@ public class AchievementResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @PostMapping(value = "/achievements/uploadPicture")
+//    @PreAuthorize("hasRole(ROLE_ADMIN)")
+    public ResponseEntity<AchievementDTO> uploadPicture(@RequestParam(name = "picture") MultipartFile file,
+                                                 @RequestParam(name = "achievement_id") Long achievement_id) {
+        AchievementDTO achievementDTO = achievementService.uploadPicture(file, achievement_id);
+        if (!Objects.isNull(achievementDTO)) {
+            return ResponseEntity.ok(achievementDTO);
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+
+    @GetMapping(value = "/achievements/viewPicture", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+    @PreAuthorize("isAnonymous() || isAuthenticated()")
+    public ResponseEntity<byte[]> viewUniversityPicture(@RequestParam(name = "url") String url) throws IOException {
+        return achievementService.getPicture(url);
     }
 }

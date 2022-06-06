@@ -231,6 +231,10 @@ file:
     uploadPath: src/main/resources/static/posts/
     viewPath: src/main/resources/static/posts/
     defaultPicture: default.png
+  achievements:
+    uploadPath: src/main/resources/static/achievements/
+    viewPath: src/main/resources/static/achievements/
+    defaultPicture: default.png
   picture:
     uploadPath: src/main/resources/static/pictures/
     viewPath: src/main/resources/static/pictures/

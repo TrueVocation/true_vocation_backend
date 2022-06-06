@@ -77,4 +77,9 @@ public class PortfolioServiceImpl implements PortfolioService {
         log.debug("Request to delete Portfolio : {}", id);
         portfolioRepository.deleteById(id);
     }
+
+    @Override
+    public void deleteByUserId(Long userId) {
+        portfolioRepository.deleteByUserId(userId);
+    }
 }
