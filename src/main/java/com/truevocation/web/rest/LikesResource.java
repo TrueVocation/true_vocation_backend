@@ -178,4 +178,9 @@ public class LikesResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    @PostMapping("/user-like")
+    public ResponseEntity<Void> setPostLike(@RequestParam("userId")Long userId, @RequestParam("postId") Long postId){
+        return  likesService.setPostLike(userId, postId);
+    }
 }

@@ -62,6 +62,10 @@
     <include file="config/liquibase/changelog/20220219155316_added_entity_constraints_AnswerUser.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220219155317_added_entity_constraints_AppUser.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220226065244_added_entity_constraints_Pictures.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220518151021_added_field_Speciality.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220524024844_tag_column_to_post.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/2022060419141115_added_columns_University.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/2022060618131418_added_columns_Achievement.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
     <include file="config/liquibase/changelog/20220512085000_add_column_point_answer_entity.xml" relativeToChangelogFile="false"/>

@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface AchievementRepository extends JpaRepository<Achievement, Long> {}
+public interface AchievementRepository extends JpaRepository<Achievement, Long> {
+    Achievement findByPictureEquals(String picture);
+}

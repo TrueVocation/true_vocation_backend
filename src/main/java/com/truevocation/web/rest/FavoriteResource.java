@@ -178,4 +178,9 @@ public class FavoriteResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    @PostMapping("/user-favorite")
+    public ResponseEntity<Void> setPostFavorite(@RequestParam("userId")Long userId, @RequestParam("postId") Long postId){
+        return  favoriteService.setPostFavorite(userId, postId);
+    }
 }

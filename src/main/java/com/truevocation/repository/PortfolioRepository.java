@@ -27,4 +27,7 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
         "select portfolio from Portfolio portfolio left join fetch portfolio.languages left join fetch portfolio.schools where portfolio.id =:id"
     )
     Optional<Portfolio> findOneWithEagerRelationships(@Param("id") Long id);
+
+    @Query(value = "delete from Portfolio p where p.appUser.user.id = :userId")
+    void deleteByUserId(@Param("userId") Long userId);
 }

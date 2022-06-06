@@ -161,6 +161,16 @@ public class ProfessionResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
+    @GetMapping("/professions-by-speciality/{id}")
+    public ResponseEntity<List<ProfessionDTO>> getAllProfessions(
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        @PathVariable Long id) {
+        log.debug("REST request to get a page of Professions");
+        Page<ProfessionDTO> page = professionService.findAllBySpeciality(pageable, id);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
     /**
      * {@code GET  /professions/:id} : get the "id" profession.
      *

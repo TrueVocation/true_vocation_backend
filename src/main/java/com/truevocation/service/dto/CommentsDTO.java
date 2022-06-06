@@ -1,5 +1,7 @@
 package com.truevocation.service.dto;
 
+import com.truevocation.web.rest.vm.UserAccountDto;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -20,6 +22,16 @@ public class CommentsDTO implements Serializable {
     private AppUserDTO user;
 
     private PostDTO post;
+
+    private UserDTO userDTO;
+
+    public UserDTO getUserDTO() {
+        return userDTO;
+    }
+
+    public void setUserDTO(UserDTO userDTO) {
+        this.userDTO = userDTO;
+    }
 
     public Long getId() {
         return id;
@@ -68,6 +80,7 @@ public class CommentsDTO implements Serializable {
     public void setPost(PostDTO post) {
         this.post = post;
     }
+
 
     @Override
     public boolean equals(Object o) {

@@ -33,6 +33,8 @@ public interface ProfessionService {
      */
     Page<ProfessionDTO> findAll(Pageable pageable);
 
+    Page<ProfessionDTO> findAllBySpeciality(Pageable pageable, Long id);
+
     /**
      * Get all the professions with eager load of many-to-many relationships.
      *

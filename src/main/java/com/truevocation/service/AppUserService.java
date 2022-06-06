@@ -53,6 +53,7 @@ public interface AppUserService {
      * @return the entity.
      */
     Optional<AppUserDTO> findOne(Long id);
+    Optional<AppUserDTO> findByUserId(Long id);
 
     /**
      * Delete the "id" appUser.
@@ -60,4 +61,6 @@ public interface AppUserService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    boolean checkUserExistence(String phoneNumber);
 }

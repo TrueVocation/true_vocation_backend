@@ -43,6 +43,9 @@ public class Post implements Serializable {
     @Column(name = "created_date")
     private LocalDate createdDate;
 
+    @Column(name = "tag")
+    private String tag;
+
     @OneToMany(mappedBy = "post")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "comment", "user", "post" }, allowSetters = true)
@@ -200,6 +203,14 @@ public class Post implements Serializable {
         return this;
     }
 
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
     public Set<Comments> getComments() {
         return this.comments;
     }
@@ -251,15 +262,20 @@ public class Post implements Serializable {
     }
 
     // prettier-ignore
+
     @Override
     public String toString() {
         return "Post{" +
-            "id=" + getId() +
-            ", title='" + getTitle() + "'" +
-            ", shortDescription='" + getShortDescription() + "'" +
-            ", description='" + getDescription() + "'" +
-            ", picture='" + getPicture() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            "}";
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", shortDescription='" + shortDescription + '\'' +
+            ", description='" + description + '\'' +
+            ", picture='" + picture + '\'' +
+            ", createdDate=" + createdDate +
+            ", tag='" + tag + '\'' +
+            ", likes=" + likes +
+            ", favorites=" + favorites +
+            ", comments=" + comments +
+            '}';
     }
 }

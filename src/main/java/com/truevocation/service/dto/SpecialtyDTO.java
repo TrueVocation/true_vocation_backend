@@ -1,10 +1,10 @@
 package com.truevocation.service.dto;
 
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import javax.validation.constraints.*;
 
 /**
  * A DTO for the {@link com.truevocation.domain.Specialty} entity.
@@ -33,6 +33,25 @@ public class SpecialtyDTO implements Serializable {
     private Set<ProfessionDTO> professions = new HashSet<>();
 
     private FacultyDTO faculty;
+
+    private Integer price;
+
+    private String employment;
+
+    public String getEmployment() {
+        return employment;
+    }
+
+    public void setEmployment(String employment) {
+        this.employment = employment;
+    }
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
 
     public Long getId() {
         return id;

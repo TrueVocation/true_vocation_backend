@@ -67,6 +67,11 @@ public class AppUserResource {
             .body(result);
     }
 
+    @PostMapping("/check-user-existence")
+    public boolean checkUserExistence(@RequestParam String phoneNumber) {
+        return appUserService.checkUserExistence(phoneNumber);
+    }
+
     /**
      * {@code PUT  /app-users/:id} : Updates an existing appUser.
      *
