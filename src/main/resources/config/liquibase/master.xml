@@ -67,4 +67,6 @@
     <include file="config/liquibase/changelog/20220512085000_add_column_point_answer_entity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220512034700_insert_prof_test.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220515032500_insert_questions.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220521171200_added_column_app_user_to_answer_user.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220606074200_added_entity_Aptitude.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

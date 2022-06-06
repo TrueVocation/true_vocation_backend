@@ -16,6 +16,8 @@ public class AnswerUserDTO implements Serializable {
 
     private TestResultDTO testResult;
 
+    private AppUserDTO appUserDTO;
+
     public Long getId() {
         return id;
     }
@@ -48,6 +50,13 @@ public class AnswerUserDTO implements Serializable {
         this.testResult = testResult;
     }
 
+    public AppUserDTO getAppUserDTO() {
+        return appUserDTO;
+    }
+
+    public void setAppUserDTO(AppUserDTO appUserDTO) {
+        this.appUserDTO = appUserDTO;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -3,9 +3,14 @@ package com.truevocation.service.impl;
 import com.truevocation.domain.AnswerUser;
 import com.truevocation.repository.AnswerUserRepository;
 import com.truevocation.service.AnswerUserService;
+import com.truevocation.service.dto.AnswerDTO;
 import com.truevocation.service.dto.AnswerUserDTO;
+import com.truevocation.service.dto.AppUserDTO;
 import com.truevocation.service.mapper.AnswerUserMapper;
-import java.util.Optional;
+
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -73,4 +78,41 @@ public class AnswerUserServiceImpl implements AnswerUserService {
         log.debug("Request to delete AnswerUser : {}", id);
         answerUserRepository.deleteById(id);
     }
+
+    public void answersUser(AppUserDTO appUserdto){
+        List<AnswerUserDTO> userAnswers = new ArrayList();
+        if(appUserdto.getId() != null) {
+            answerUserRepository.findAllByAppUserId(appUserdto.getId())
+                .forEach(answerUser -> userAnswers.add(answerUserMapper.toDto(answerUser)));
+
+            Map<Long, AnswerDTO> userAptitude = new HashMap<>();
+            Map<Integer, String> userAptitudes = new HashMap<>();
+            AtomicInteger firstAptitude = new AtomicInteger();
+            AtomicInteger secondAptitude = new AtomicInteger();
+            AtomicInteger thirdAptitude = new AtomicInteger();
+            AtomicInteger fourthAptitude = new AtomicInteger();
+            AtomicInteger fifthAptitude = new AtomicInteger();
+            AtomicInteger sixthAptitude = new AtomicInteger();
+
+            userAnswers.stream().map(AnswerUserDTO::getAnswer).forEach(answerDTO ->{
+                switch (answerDTO.getPoint()) {
+                    case 1: {
+                        firstAptitude.getAndIncrement();
+                    }
+                    case 2: {
+                        secondAptitude.getAndIncrement();
+                    }
+                    case 3:
+                        thirdAptitude.getAndIncrement();
+                    case 4:
+                        fourthAptitude.getAndIncrement();
+                    case 5:
+                        fifthAptitude.getAndIncrement();
+                    case 6:
+                        sixthAptitude.getAndIncrement();
+                }
+            });
+        }
+    }
+
 }
