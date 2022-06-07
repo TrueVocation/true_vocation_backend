@@ -57,4 +57,6 @@ public interface PortfolioService {
     void delete(Long id);
 
     void deleteByUserId(Long userId);
+
+    Optional<PortfolioDTO> getByUserId(Long id);
 }

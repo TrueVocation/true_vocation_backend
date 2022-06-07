@@ -40,7 +40,7 @@ public class Portfolio implements Serializable {
     private String aboutMe;
 
     @JsonIgnoreProperties(
-        value = { "user", "comments", "favorites", "commentAnswers", "likes", "portfolio", "testResult" },
+        value = { "comments", "favorites", "commentAnswers", "likes", "portfolio", "testResult" },
         allowSetters = true
     )
     @OneToOne
