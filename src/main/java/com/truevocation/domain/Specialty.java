@@ -77,7 +77,44 @@ public class Specialty implements Serializable {
     @JsonIgnoreProperties(value = { "specialties", "universities" }, allowSetters = true)
     private Faculty faculty;
 
+    @OneToMany(mappedBy = "specialty")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "university", "user", "post", "specialty", "profession" }, allowSetters = true)
+    private Set<Favorite> favorites = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
+
+    public Set<Favorite> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(Set<Favorite> favorites) {
+        if (this.favorites != null) {
+            this.favorites.forEach(i -> i.setSpecialty(null));
+        }
+        if (favorites != null) {
+            favorites.forEach(i -> i.setSpecialty(this));
+        }
+        this.favorites = favorites;
+    }
+
+    public Specialty favorites(Set<Favorite> favorites) {
+        this.setFavorites(favorites);
+        return this;
+    }
+
+    public Specialty addFavorite(Favorite favorite) {
+        this.favorites.add(favorite);
+        favorite.setSpecialty(this);
+        return this;
+    }
+
+    public Specialty removeFavorite(Favorite favorite) {
+        this.favorites.remove(favorite);
+        favorite.setSpecialty(null);
+        return this;
+    }
 
     public String getEmployment() {
         return employment;

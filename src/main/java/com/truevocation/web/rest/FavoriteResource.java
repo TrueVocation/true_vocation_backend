@@ -2,6 +2,7 @@ package com.truevocation.web.rest;
 
 import com.truevocation.repository.FavoriteRepository;
 import com.truevocation.service.FavoriteService;
+import com.truevocation.service.UserService;
 import com.truevocation.service.dto.FavoriteDTO;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +43,10 @@ public class FavoriteResource {
 
     private final FavoriteRepository favoriteRepository;
 
+
+    @Autowired
+    private UserService userService;
+
     public FavoriteResource(FavoriteService favoriteService, FavoriteRepository favoriteRepository) {
         this.favoriteService = favoriteService;
         this.favoriteRepository = favoriteRepository;
@@ -64,6 +70,36 @@ public class FavoriteResource {
             .created(new URI("/api/favorites/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
+    }
+
+    @PostMapping("/check-favorites-university")
+    public boolean checkFavoritesUniversity(@RequestBody FavoriteDTO favoriteDTO) {
+        return favoriteService.isFavoriteUniversity(favoriteDTO.getUniversity().getId(), favoriteDTO.getUser().getId());
+    }
+
+    @PostMapping("/check-favorites-speciality")
+    public boolean checkFavoritesSpeciality(@RequestBody FavoriteDTO favoriteDTO) {
+        return favoriteService.isFavoriteSpeciality(favoriteDTO.getSpecialty().getId(), favoriteDTO.getUser().getId());
+    }
+
+    @PostMapping("/check-favorites-profession")
+    public boolean checkFavoritesProfession(@RequestBody FavoriteDTO favoriteDTO) {
+        return favoriteService.isFavoriteProfession(favoriteDTO.getProfession().getId(), favoriteDTO.getUser().getId());
+    }
+
+    @DeleteMapping("/delete-favorites-profession")
+    public void deleteFavoritesProfession(@RequestBody FavoriteDTO favoriteDTO) {
+        favoriteService.deleteFavoriteProfession(favoriteDTO.getProfession().getId(), favoriteDTO.getUser().getId());
+    }
+
+    @DeleteMapping("/delete-favorites-speciality")
+    public void deleteFavoritesSpeciality(@RequestBody FavoriteDTO favoriteDTO) {
+        favoriteService.deleteFavoriteSpeciality(favoriteDTO.getSpecialty().getId(), favoriteDTO.getUser().getId());
+    }
+
+    @DeleteMapping("/delete-favorites-university")
+    public void deleteFavoritesUniversity(@RequestBody FavoriteDTO favoriteDTO) {
+        favoriteService.deleteFavoriteUniversity(favoriteDTO.getUniversity().getId(), favoriteDTO.getUser().getId());
     }
 
     /**

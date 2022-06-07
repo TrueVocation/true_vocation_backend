@@ -107,6 +107,36 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     @Override
+    public boolean isFavoriteUniversity(Long universityId, Long userId) {
+        return favoriteRepository.isFavoriteUniversity(universityId, userId);
+    }
+
+    @Override
+    public boolean isFavoriteSpeciality(Long specialtyId, Long userId) {
+        return favoriteRepository.isFavoriteUniversity(specialtyId, userId);
+    }
+
+    @Override
+    public boolean isFavoriteProfession(Long professionId, Long userId) {
+        return favoriteRepository.isFavoriteUniversity(professionId, userId);
+    }
+
+    @Override
+    public void deleteFavoriteProfession(Long professionId, Long userId) {
+        favoriteRepository.deleteFavoriteProfession(professionId, userId);
+    }
+
+    @Override
+    public void deleteFavoriteSpeciality(Long specialtyId, Long userId) {
+        favoriteRepository.deleteFavoriteSpeciality(specialtyId, userId);
+    }
+
+    @Override
+    public void deleteFavoriteUniversity(Long universityId, Long userId) {
+        favoriteRepository.deleteFavoriteUniversity(universityId, userId);
+    }
+
+    @Override
     public ResponseEntity<Void> setPostFavorite(Long userId, Long postId) {
         AppUserDTO appUser = appUserService.findByUserId(userId).orElse(null);
         if(Objects.isNull(appUser)){

@@ -18,6 +18,26 @@ public class FavoriteDTO implements Serializable {
 
     private PostDTO post;
 
+    private SpecialtyDTO specialty;
+
+    private ProfessionDTO profession;
+
+    public SpecialtyDTO getSpecialty() {
+        return specialty;
+    }
+
+    public void setSpecialty(SpecialtyDTO specialty) {
+        this.specialty = specialty;
+    }
+
+    public ProfessionDTO getProfession() {
+        return profession;
+    }
+
+    public void setProfession(ProfessionDTO profession) {
+        this.profession = profession;
+    }
+
     public Long getId() {
         return id;
     }

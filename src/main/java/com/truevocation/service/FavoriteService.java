@@ -51,5 +51,12 @@ public interface FavoriteService {
 
     boolean isFavorite(Long postId, Long userId);
 
+    boolean isFavoriteUniversity(Long universityId, Long userId);
+    boolean isFavoriteSpeciality(Long specialtyId, Long userId);
+    boolean isFavoriteProfession(Long professionId, Long userId);
+    void deleteFavoriteProfession(Long professionId, Long userId);
+    void deleteFavoriteSpeciality(Long specialtyId, Long userId);
+    void deleteFavoriteUniversity(Long universityId, Long userId);
+
     ResponseEntity<Void> setPostFavorite(Long userId, Long postId);
 }
