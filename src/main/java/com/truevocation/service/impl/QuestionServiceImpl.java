@@ -86,7 +86,7 @@ public class QuestionServiceImpl implements QuestionService {
         log.debug("Request to get all questions where AnswerUser is null");
         return StreamSupport
             .stream(questionRepository.findAll().spliterator(), false)
-            .filter(question -> question.getAnswerUser() == null)
+            .filter(question -> question.getAnswerUsers() == null)
             .map(questionMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }

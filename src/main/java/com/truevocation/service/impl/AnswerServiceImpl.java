@@ -74,7 +74,7 @@ public class AnswerServiceImpl implements AnswerService {
         log.debug("Request to get all answers where AnswerUser is null");
         return StreamSupport
             .stream(answerRepository.findAll().spliterator(), false)
-            .filter(answer -> answer.getAnswerUser() == null)
+            .filter(answer -> answer.getAnswerUsers() == null)
             .map(answerMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }

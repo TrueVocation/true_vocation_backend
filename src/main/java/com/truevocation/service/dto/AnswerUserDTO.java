@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * A DTO for the {@link com.truevocation.domain.AnswerUser} entity.
  */
-public class AnswerUserDTO implements Serializable {
+public class    AnswerUserDTO implements Serializable {
 
     private Long id;
 
@@ -16,7 +16,7 @@ public class AnswerUserDTO implements Serializable {
 
     private TestResultDTO testResult;
 
-    private AppUserDTO appUserDTO;
+    private AppUserDTO appUser;
 
     public Long getId() {
         return id;
@@ -50,12 +50,12 @@ public class AnswerUserDTO implements Serializable {
         this.testResult = testResult;
     }
 
-    public AppUserDTO getAppUserDTO() {
-        return appUserDTO;
+    public AppUserDTO getAppUser() {
+        return appUser;
     }
 
-    public void setAppUserDTO(AppUserDTO appUserDTO) {
-        this.appUserDTO = appUserDTO;
+    public void setAppUser(AppUserDTO appUserDTO) {
+        this.appUser = appUserDTO;
     }
     @Override
     public boolean equals(Object o) {

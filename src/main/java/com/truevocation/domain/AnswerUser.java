@@ -22,13 +22,11 @@ public class AnswerUser implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @JsonIgnoreProperties(value = { "answers", "answerUser", "profTest" }, allowSetters = true)
-    @OneToOne
+    @ManyToOne
     @JoinColumn(unique = true)
     private Question question;
 
-    @JsonIgnoreProperties(value = { "answerUser", "questions" }, allowSetters = true)
-    @OneToOne
+    @ManyToOne
     @JoinColumn(unique = true)
     private Answer answer;
 

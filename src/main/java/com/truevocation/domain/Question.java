@@ -37,9 +37,10 @@ public class Question implements Serializable {
     @JsonIgnoreProperties(value = { "answerUser", "questions" }, allowSetters = true)
     private Set<Answer> answers = new HashSet<>();
 
+    @OneToMany(mappedBy = "question")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "question", "answer", "testResult" }, allowSetters = true)
-    @OneToOne(mappedBy = "question")
-    private AnswerUser answerUser;
+    private Set<AnswerUser> answerUsers = new HashSet<>();
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "questions", "testResults" }, allowSetters = true)
@@ -97,26 +98,36 @@ public class Question implements Serializable {
         answer.getQuestions().remove(this);
         return this;
     }
-
-    public AnswerUser getAnswerUser() {
-        return this.answerUser;
+    public Set<AnswerUser> getAnswerUsers() {
+        return this.answerUsers;
     }
 
-    public void setAnswerUser(AnswerUser answerUser) {
-        if (this.answerUser != null) {
-            this.answerUser.setQuestion(null);
+    public void setAnswerUsers(Set<AnswerUser> answerUsers) {
+        if (this.answerUsers != null) {
+            this.answerUsers.forEach(i -> i.setTestResult(null));
         }
-        if (answerUser != null) {
-            answerUser.setQuestion(this);
+        if (answerUsers != null) {
+            answerUsers.forEach(i -> i.setQuestion(this));
         }
-        this.answerUser = answerUser;
+        this.answerUsers = answerUsers;
     }
 
-    public Question answerUser(AnswerUser answerUser) {
-        this.setAnswerUser(answerUser);
+    public Question answerUsers(Set<AnswerUser> answerUsers) {
+        this.setAnswerUsers(answerUsers);
         return this;
     }
 
+    public Question addAnswerUser(AnswerUser answerUser) {
+        this.answerUsers.add(answerUser);
+        answerUser.setQuestion(this);
+        return this;
+    }
+
+    public Question removeAnswerUser(AnswerUser answerUser) {
+        this.answerUsers.remove(answerUser);
+        answerUser.setQuestion(null);
+        return this;
+    }
     public ProfTest getProfTest() {
         return this.profTest;
     }

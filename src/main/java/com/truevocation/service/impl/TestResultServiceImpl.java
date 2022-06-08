@@ -2,11 +2,12 @@ package com.truevocation.service.impl;
 
 import com.truevocation.domain.TestResult;
 import com.truevocation.repository.TestResultRepository;
+import com.truevocation.service.AnswerUserService;
 import com.truevocation.service.TestResultService;
+import com.truevocation.service.dto.AppUserDTO;
 import com.truevocation.service.dto.TestResultDTO;
 import com.truevocation.service.mapper.TestResultMapper;
 import java.util.Optional;
-import java.util.concurrent.atomic.LongAccumulator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +29,12 @@ public class TestResultServiceImpl implements TestResultService {
 
     private final TestResultMapper testResultMapper;
 
-    public TestResultServiceImpl(TestResultRepository testResultRepository, TestResultMapper testResultMapper) {
+    private final AnswerUserService answerUserService;
+
+    public TestResultServiceImpl(TestResultRepository testResultRepository, TestResultMapper testResultMapper, AnswerUserService answerUserService) {
         this.testResultRepository = testResultRepository;
         this.testResultMapper = testResultMapper;
+        this.answerUserService = answerUserService;
     }
 
     @Override
@@ -81,5 +85,12 @@ public class TestResultServiceImpl implements TestResultService {
         return testResultMapper.toDto(testResultRepository.findByAppUserId(id));
     }
 
+    @Override
+    public TestResultDTO getUserTestResult(Long id){
 
+//        TestResultDTO userTestResult = testResultMapper.toDto(testResultRepository.findByAppUserId(appUserDTO.getId()));
+        TestResultDTO testResultDTO = new TestResultDTO();
+        testResultDTO.setUserAptitudes(answerUserService.userAptitudes(id));
+        return testResultDTO;
+    }
 }

@@ -9,8 +9,8 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring", uses = { QuestionMapper.class, AnswerMapper.class, TestResultMapper.class })
 public interface AnswerUserMapper extends EntityMapper<AnswerUserDTO, AnswerUser> {
-    @Mapping(target = "question", source = "question", qualifiedByName = "id")
-    @Mapping(target = "answer", source = "answer", qualifiedByName = "id")
-    @Mapping(target = "testResult", source = "testResult", qualifiedByName = "id")
+    @Mapping(target = "question")
+    @Mapping(target = "answer", source = "answer")
+    @Mapping(target = "testResult", source = "testResult")
     AnswerUserDTO toDto(AnswerUser s);
 }
