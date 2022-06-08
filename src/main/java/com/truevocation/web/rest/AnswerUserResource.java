@@ -66,6 +66,18 @@ public class AnswerUserResource {
             .body(result);
     }
 
+    @PostMapping("/answer-users-list")
+    public List<AnswerUserDTO> createAnswerUserList(@RequestBody List<AnswerUserDTO> answerUserDTOs) throws URISyntaxException {
+        log.debug("REST request to save AnswerUser : {}", answerUserDTOs);
+        answerUserDTOs.stream()
+            .forEach(answerUserDTO -> {
+                if (answerUserDTO.getId() != null) {
+                    throw new BadRequestAlertException("A new answerUser cannot already have an ID", ENTITY_NAME, "idexists");
+                }
+            });
+        List<AnswerUserDTO> result = answerUserService.saveAnswers(answerUserDTOs);
+        return result;
+    }
     /**
      * {@code PUT  /answer-users/:id} : Updates an existing answerUser.
      *
@@ -178,4 +190,7 @@ public class AnswerUserResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+
+
 }

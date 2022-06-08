@@ -2,6 +2,7 @@ package com.truevocation.web.rest;
 
 import com.truevocation.repository.TestResultRepository;
 import com.truevocation.service.TestResultService;
+import com.truevocation.service.dto.AppUserDTO;
 import com.truevocation.service.dto.TestResultDTO;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
@@ -177,5 +178,13 @@ public class TestResultResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("/user-test-result/{id}")
+    public TestResultDTO getUserTestResult(@PathVariable Long id) {
+        log.debug("REST request to get TestResult : {}", id);
+
+        TestResultDTO testResultDTO = testResultService.getUserTestResult(id);
+        return testResultDTO;
     }
 }

@@ -1,7 +1,16 @@
 package com.truevocation.service;
 
+import com.truevocation.domain.Aptitude;
 import com.truevocation.service.dto.AnswerUserDTO;
+
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import com.truevocation.service.dto.AppUserDTO;
+import com.truevocation.service.dto.AptitudeDTO;
+import com.truevocation.service.dto.UserAptitudesDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,6 +25,9 @@ public interface AnswerUserService {
      * @return the persisted entity.
      */
     AnswerUserDTO save(AnswerUserDTO answerUserDTO);
+
+
+    List<AnswerUserDTO> saveAnswers(List<AnswerUserDTO> answerUserDTOs);
 
     /**
      * Partially updates a answerUser.
@@ -47,4 +59,6 @@ public interface AnswerUserService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    List<UserAptitudesDTO> userAptitudes(Long appUserDtoId);
 }

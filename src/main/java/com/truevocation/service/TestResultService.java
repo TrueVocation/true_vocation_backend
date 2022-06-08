@@ -1,7 +1,10 @@
 package com.truevocation.service;
 
+import com.truevocation.service.dto.AppUserDTO;
 import com.truevocation.service.dto.TestResultDTO;
 import java.util.Optional;
+import java.util.concurrent.atomic.LongAccumulator;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -47,4 +50,8 @@ public interface TestResultService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    TestResultDTO findByAppUserId(Long id);
+
+    TestResultDTO getUserTestResult(Long id);
 }

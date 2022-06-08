@@ -22,19 +22,22 @@ public class AnswerUser implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @JsonIgnoreProperties(value = { "answers", "answerUser", "profTest" }, allowSetters = true)
-    @OneToOne
+    @ManyToOne
     @JoinColumn(unique = true)
     private Question question;
 
-    @JsonIgnoreProperties(value = { "answerUser", "questions" }, allowSetters = true)
-    @OneToOne
+    @ManyToOne
     @JoinColumn(unique = true)
     private Answer answer;
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "appUser", "recommendation", "answerUsers", "profTest" }, allowSetters = true)
     private TestResult testResult;
+
+    @ManyToOne
+    @JsonIgnoreProperties(value = { "user", "favorite", "commentAnswer", "like", "portfolio", "testResult"}, allowSetters = true)
+    private AppUser appUser;
+
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -90,6 +93,18 @@ public class AnswerUser implements Serializable {
         return this;
     }
 
+    public AppUser getAppUser() {
+        return this.appUser;
+    }
+
+    public void setAppUser(AppUser appUser) {
+        this.appUser = appUser;
+    }
+
+    public AnswerUser appUser(AppUser appUser) {
+        this.setAppUser(appUser);
+        return this;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override

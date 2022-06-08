@@ -12,6 +12,8 @@ public class AnswerDTO implements Serializable {
 
     private String answer;
 
+    private int point;
+
     public Long getId() {
         return id;
     }
@@ -26,6 +28,14 @@ public class AnswerDTO implements Serializable {
 
     public void setAnswer(String answer) {
         this.answer = answer;
+    }
+
+    public int getPoint() {
+        return point;
+    }
+
+    public void setPoint(int point) {
+        this.point = point;
     }
 
     @Override

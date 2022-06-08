@@ -1,7 +1,10 @@
 package com.truevocation.service.dto;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A DTO for the {@link com.truevocation.domain.TestResult} entity.
@@ -15,6 +18,8 @@ public class TestResultDTO implements Serializable {
     private RecommendationDTO recommendation;
 
     private ProfTestDTO profTest;
+
+    private List<UserAptitudesDTO> userAptitudes;
 
     public Long getId() {
         return id;
@@ -46,6 +51,14 @@ public class TestResultDTO implements Serializable {
 
     public void setProfTest(ProfTestDTO profTest) {
         this.profTest = profTest;
+    }
+
+    public List<UserAptitudesDTO> getUserAptitudes() {
+        return userAptitudes;
+    }
+
+    public void setUserAptitudes(List<UserAptitudesDTO> userAptitudes) {
+        this.userAptitudes = userAptitudes;
     }
 
     @Override
