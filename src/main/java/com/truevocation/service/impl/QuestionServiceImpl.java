@@ -5,6 +5,8 @@ import com.truevocation.repository.QuestionRepository;
 import com.truevocation.service.QuestionService;
 import com.truevocation.service.dto.QuestionDTO;
 import com.truevocation.service.mapper.QuestionMapper;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -63,6 +65,14 @@ public class QuestionServiceImpl implements QuestionService {
     public Page<QuestionDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Questions");
         return questionRepository.findAll(pageable).map(questionMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<QuestionDTO> findAllByProfTestId(Long id) {
+        log.debug("Request to get all Questions");
+        List<Question> questions = questionRepository.findAllByProfTestId(id);
+        return questionMapper.toDto(questions);
     }
 
     public Page<QuestionDTO> findAllWithEagerRelationships(Pageable pageable) {

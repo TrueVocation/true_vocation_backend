@@ -1,7 +1,9 @@
 package com.truevocation.service;
 
-import com.truevocation.service.dto.FavoriteDTO;
+import com.truevocation.service.dto.*;
+
 import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,14 @@ public interface FavoriteService {
      * @return the list of entities.
      */
     Page<FavoriteDTO> findAll(Pageable pageable);
+
+    Page<UniversityDTO> findAllFavoritesUniversitiesByUserId(Pageable pageable, Long id);
+
+    Page<SpecialtyDTO> findAllFavoriteSpecialtyByUserId(Pageable pageable, Long id);
+
+    Page<ProfessionDTO> findAllFavoriteProfessionByUserId(Pageable pageable, Long id);
+
+    Page<PostDTO> findAllFavoritePostByUserId(Pageable pageable, Long id);
 
     /**
      * Get the "id" favorite.

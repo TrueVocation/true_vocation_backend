@@ -1,9 +1,10 @@
 package com.truevocation.web.rest;
 
+import com.github.dockerjava.api.exception.UnauthorizedException;
 import com.truevocation.repository.FavoriteRepository;
 import com.truevocation.service.FavoriteService;
 import com.truevocation.service.UserService;
-import com.truevocation.service.dto.FavoriteDTO;
+import com.truevocation.service.dto.*;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -100,6 +101,38 @@ public class FavoriteResource {
     @DeleteMapping("/delete-favorites-university")
     public void deleteFavoritesUniversity(@RequestBody FavoriteDTO favoriteDTO) {
         favoriteService.deleteFavoriteUniversity(favoriteDTO.getUniversity().getId(), favoriteDTO.getUser().getId());
+    }
+
+    @GetMapping("/favorites-universities/{id}")
+    public ResponseEntity<List<UniversityDTO>> getAllFavoritesUniversitiesByUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable, @PathVariable Long id) {
+        log.debug("REST request to get a page of Favorites-Universities");
+        Page<UniversityDTO> page = favoriteService.findAllFavoritesUniversitiesByUserId(pageable, id);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/favorites-specialities/{id}")
+    public ResponseEntity<List<SpecialtyDTO>> getAllFavoritesSpecialitiesByUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable, @PathVariable Long id) {
+        log.debug("REST request to get a page of Favorites-Universities");
+        Page<SpecialtyDTO> page = favoriteService.findAllFavoriteSpecialtyByUserId(pageable, id);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/favorites-professions/{id}")
+    public ResponseEntity<List<ProfessionDTO>> getAllFavoritesProfessionsByUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable, @PathVariable Long id) {
+        log.debug("REST request to get a page of Favorites-Universities");
+        Page<ProfessionDTO> page = favoriteService.findAllFavoriteProfessionByUserId(pageable, id);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/favorites-posts/{id}")
+    public ResponseEntity<List<PostDTO>> getAllFavoritesPostsByUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable, @PathVariable Long id) {
+        log.debug("REST request to get a page of Favorites-Universities");
+        Page<PostDTO> page = favoriteService.findAllFavoritePostByUserId(pageable, id);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**

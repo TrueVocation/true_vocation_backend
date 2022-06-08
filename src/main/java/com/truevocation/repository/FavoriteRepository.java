@@ -1,8 +1,8 @@
 package com.truevocation.repository;
 
-import com.truevocation.domain.AppUser;
-import com.truevocation.domain.Favorite;
-import com.truevocation.domain.University;
+import com.truevocation.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -47,4 +47,32 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     void deleteFavoriteUniversity(@Param("universityId")Long universityId, @Param("userId")Long userId);
 
     Favorite findByUserIdAndPostId(Long userId, Long postId);
+
+    @Query(
+        value = "select u from University u " +
+            "inner join Favorite f on u.id = f.university.id " +
+            "where f.user.id = :id"
+    )
+    Page<University> findAllFavoriteUniversityByUserId(Pageable pageable, @Param("id") Long id);
+
+    @Query(
+        value = "select s from Specialty s " +
+            "inner join Favorite f on s.id = f.specialty.id " +
+            "where f.user.id = :id"
+    )
+    Page<Specialty> findAllFavoriteSpecialtyByUserId(Pageable pageable, @Param("id") Long id);
+
+    @Query(
+        value = "select p from Profession p " +
+            "inner join Favorite f on p.id = f.profession.id " +
+            "where f.user.id = :id"
+    )
+    Page<Profession> findAllFavoriteProfessionByUserId(Pageable pageable, @Param("id") Long id);
+
+    @Query(
+        value = "select p from Post p " +
+            "inner join Favorite f on p.id = f.post.id " +
+            "where f.user.id = :id"
+    )
+    Page<Post> findAllFavoritePostByUserId(Pageable pageable, @Param("id") Long id);
 }

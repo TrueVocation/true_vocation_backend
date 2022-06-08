@@ -10,6 +10,7 @@ import com.truevocation.web.rest.errors.BadRequestAlertException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -158,6 +159,23 @@ public class PostResource {
         Page<PostDTO> page = postService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page);
+    }
+
+    @GetMapping("/posts-list")
+    public ResponseEntity<List<PostDTO>> getAllPostsList(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        log.debug("REST request to get a page of Posts");
+        Page<PostDTO> page = postService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/posts-today")
+    public ResponseEntity<List<PostDTO>> getTodayPosts(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        log.debug("REST request to get a page of Posts");
+
+        Page<PostDTO> page = postService.findAllToday(pageable, LocalDate.now());
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     @GetMapping("/posts-page")

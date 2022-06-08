@@ -33,6 +33,8 @@ public interface QuestionService {
      * @return the list of entities.
      */
     Page<QuestionDTO> findAll(Pageable pageable);
+
+    List<QuestionDTO> findAllByProfTestId(Long id);
     /**
      * Get all the QuestionDTO where AnswerUser is {@code null}.
      *

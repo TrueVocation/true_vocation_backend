@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -122,6 +123,14 @@ public class PostServiceImpl implements PostService {
     public Page<PostDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Posts");
         return postRepository.findAll(pageable).map(postMapper::toDto);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PostDTO> findAllToday(Pageable pageable, LocalDate localDate) {
+        log.debug("Request to get all Posts");
+        return postRepository.findAllByCreatedDate(localDate, pageable).map(postMapper::toDto);
     }
 
     @Override

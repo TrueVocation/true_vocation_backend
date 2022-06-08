@@ -6,16 +6,12 @@ import com.truevocation.repository.FavoriteRepository;
 import com.truevocation.service.AppUserService;
 import com.truevocation.service.FavoriteService;
 import com.truevocation.service.PostService;
-import com.truevocation.service.dto.AppUserDTO;
-import com.truevocation.service.dto.FavoriteDTO;
-import com.truevocation.service.dto.PostDTO;
-import com.truevocation.service.mapper.AppUserMapper;
-import com.truevocation.service.mapper.FavoriteMapper;
+import com.truevocation.service.dto.*;
+import com.truevocation.service.mapper.*;
 
 import java.util.Objects;
 import java.util.Optional;
 
-import com.truevocation.service.mapper.PostMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +42,15 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private UniversityMapper universityMapper;
+
+    @Autowired
+    private SpecialtyMapper specialtyMapper;
+
+    @Autowired
+    private ProfessionMapper professionMapper;
 
     @Autowired
     private PostMapper postMapper;
@@ -86,6 +91,34 @@ public class FavoriteServiceImpl implements FavoriteService {
     public Page<FavoriteDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Favorites");
         return favoriteRepository.findAll(pageable).map(favoriteMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UniversityDTO> findAllFavoritesUniversitiesByUserId(Pageable pageable, Long id) {
+        log.debug("Request to get all Favorites");
+        return favoriteRepository.findAllFavoriteUniversityByUserId(pageable, id).map(universityMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<SpecialtyDTO> findAllFavoriteSpecialtyByUserId(Pageable pageable, Long id) {
+        log.debug("Request to get all Favorites");
+        return favoriteRepository.findAllFavoriteSpecialtyByUserId(pageable, id).map(specialtyMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProfessionDTO> findAllFavoriteProfessionByUserId(Pageable pageable, Long id) {
+        log.debug("Request to get all Favorites");
+        return favoriteRepository.findAllFavoriteProfessionByUserId(pageable, id).map(professionMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PostDTO> findAllFavoritePostByUserId(Pageable pageable, Long id) {
+        log.debug("Request to get all Favorites");
+        return favoriteRepository.findAllFavoritePostByUserId(pageable, id).map(postMapper::toDto);
     }
 
     @Override
