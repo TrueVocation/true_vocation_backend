@@ -82,4 +82,9 @@ public class PortfolioServiceImpl implements PortfolioService {
     public void deleteByUserId(Long userId) {
         portfolioRepository.deleteByUserId(userId);
     }
+
+    @Override
+    public Optional<PortfolioDTO> getByUserId(Long id) {
+        return portfolioRepository.findOneWithEagerRelationshipsByUser(id).map(portfolioMapper::toDto);
+    }
 }

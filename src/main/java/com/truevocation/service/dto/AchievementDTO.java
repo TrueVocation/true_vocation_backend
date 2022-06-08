@@ -1,5 +1,7 @@
 package com.truevocation.service.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;

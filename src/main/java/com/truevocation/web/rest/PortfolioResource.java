@@ -2,7 +2,9 @@ package com.truevocation.web.rest;
 
 import com.truevocation.repository.PortfolioRepository;
 import com.truevocation.service.PortfolioService;
+import com.truevocation.service.UserService;
 import com.truevocation.service.dto.PortfolioDTO;
+import com.truevocation.service.dto.PortfolioSaveDto;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -13,6 +15,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +45,9 @@ public class PortfolioResource {
     private final PortfolioService portfolioService;
 
     private final PortfolioRepository portfolioRepository;
+
+    @Autowired
+    private UserService userService;
 
     public PortfolioResource(PortfolioService portfolioService, PortfolioRepository portfolioRepository) {
         this.portfolioService = portfolioService;
@@ -174,6 +180,14 @@ public class PortfolioResource {
         return ResponseUtil.wrapOrNotFound(portfolioDTO);
     }
 
+
+    @GetMapping("/portfolios/user/{id}")
+    public ResponseEntity<PortfolioDTO> getPortfolioByUser(@PathVariable Long id) {
+        log.debug("REST request to get Portfolio : {}", id);
+        Optional<PortfolioDTO> portfolioDTO = portfolioService.getByUserId(id);
+        return ResponseUtil.wrapOrNotFound(portfolioDTO);
+    }
+
     /**
      * {@code DELETE  /portfolios/:id} : delete the "id" portfolio.
      *
@@ -188,5 +202,24 @@ public class PortfolioResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+
+    @PostMapping("/portfolios/save")
+    public ResponseEntity<PortfolioDTO> updatePortfolio(@RequestBody PortfolioSaveDto portfolioDTO) {
+        if (portfolioDTO.getPortfolio().getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+
+        if (!portfolioRepository.existsById(portfolioDTO.getPortfolio().getId())) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        PortfolioDTO result = portfolioService.save(portfolioDTO.getPortfolio());
+        userService.updateProfile(portfolioDTO.getUserAccountDto());
+        return ResponseEntity
+            .ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, portfolioDTO.getPortfolio().getId().toString()))
+            .body(result);
     }
 }

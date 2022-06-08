@@ -1,8 +1,14 @@
 package com.truevocation.web.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.truevocation.domain.Portfolio;
 import com.truevocation.repository.AchievementRepository;
 import com.truevocation.service.AchievementService;
 import com.truevocation.service.dto.AchievementDTO;
+import com.truevocation.service.dto.PortfolioDTO;
 import com.truevocation.service.dto.PostDTO;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
 
@@ -66,6 +72,27 @@ public class AchievementResource {
             throw new BadRequestAlertException("A new achievement cannot already have an ID", ENTITY_NAME, "idexists");
         }
         AchievementDTO result = achievementService.save(achievementDTO);
+        return ResponseEntity
+            .created(new URI("/api/achievements/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    @PostMapping(value = "/achievements/with-file", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<AchievementDTO> createAchievementWithFile(@RequestParam("data") String json, @RequestParam("multipartFile") MultipartFile multipartFile,@RequestParam("portfolio_id")Long portfolioId) throws URISyntaxException, JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        AchievementDTO achievementDTO = objectMapper.readValue(json, AchievementDTO.class);
+        PortfolioDTO portfolio = new PortfolioDTO();
+        portfolio.setId(portfolioId);
+        achievementDTO.setPortfolio(portfolio);
+        log.debug("REST request to save Achievement : {}", achievementDTO);
+        if (achievementDTO.getId() != null) {
+            throw new BadRequestAlertException("A new achievement cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        AchievementDTO result = achievementService.save(achievementDTO);
+        result = achievementService.uploadPicture(multipartFile, result.getId());
         return ResponseEntity
             .created(new URI("/api/achievements/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -201,5 +228,11 @@ public class AchievementResource {
     @PreAuthorize("isAnonymous() || isAuthenticated()")
     public ResponseEntity<byte[]> viewUniversityPicture(@RequestParam(name = "url") String url) throws IOException {
         return achievementService.getPicture(url);
+    }
+
+    @GetMapping(value = "/achievements/portfolio/{id}")
+    @PreAuthorize("isAnonymous() || isAuthenticated()")
+    public ResponseEntity<List<AchievementDTO>> findByPortfolio(@PathVariable("id")Long id){
+        return ResponseEntity.ok(achievementService.findByPortfolio(id));
     }
 }

@@ -15,10 +15,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Base64;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -117,7 +115,7 @@ public class AchievementServiceImpl implements AchievementService {
             try {
                 AchievementDTO achievementDTO = this.findOne(achievementId).orElse(null);
                 if (Objects.isNull(achievementDTO)) {
-                    throw new EntityNotFoundException("Achievement entity not found");
+                    achievementDTO = new AchievementDTO();
                 }
 
                 String picName = UUID.randomUUID().toString();
@@ -173,6 +171,13 @@ public class AchievementServiceImpl implements AchievementService {
         }
     }
 
+
+    @Override
+    public List<AchievementDTO> findByPortfolio(Long id) {
+        return achievementRepository.findAllByPortfolioId(id).stream()
+            .map(achievementMapper::toDto)
+            .collect(Collectors.toList());
+    }
 }
 
 

@@ -3,6 +3,7 @@ package com.truevocation.service;
 import com.truevocation.service.dto.AchievementDTO;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import com.truevocation.service.dto.PostDTO;
@@ -58,4 +59,6 @@ public interface AchievementService {
     AchievementDTO uploadPicture(MultipartFile file, Long achievementId);
 
     ResponseEntity<byte[]> getPicture(String url) throws IOException;
+
+    List<AchievementDTO> findByPortfolio(Long id);
 }
