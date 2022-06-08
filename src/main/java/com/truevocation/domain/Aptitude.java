@@ -1,5 +1,6 @@
 package com.truevocation.domain;
 
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
@@ -8,7 +9,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "aptitude")
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Aptitude implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -25,7 +26,7 @@ public class Aptitude implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "code")
+    @Column(name = "description")
     private String description;
 
     public Long getId() {
