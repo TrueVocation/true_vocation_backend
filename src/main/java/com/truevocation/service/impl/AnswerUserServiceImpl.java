@@ -16,9 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing {@link AnswerUser}.
@@ -180,7 +182,7 @@ public class AnswerUserServiceImpl implements AnswerUserService {
                 }
                 userAptitudes.add(userAptitudesDTO);
             }
-            return userAptitudes;
+            return userAptitudes.stream().sorted((Comparator.comparingInt(UserAptitudesDTO::getScore)).reversed()).collect(Collectors.toList());
         }
 
         return userAptitudes;
