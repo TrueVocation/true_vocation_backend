@@ -17,6 +17,9 @@ public class AppUserDTO implements Serializable {
 
     private UserDTO user;
 
+    public AppUserDTO() {
+    }
+
     public Long getId() {
         return id;
     }

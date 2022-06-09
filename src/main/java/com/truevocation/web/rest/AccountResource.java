@@ -141,6 +141,7 @@ public class AccountResource {
                 if(!Objects.isNull(appUserDTO)){
                     dto.setBirthdate(appUserDTO.getBirthdate());
                     dto.setPhoneNumber(appUserDTO.getPhoneNumber());
+                    dto.setAppUserId(appUserDTO.getId());
                 }
                 Set<Authority> authorities = user.getAuthorities();
                 Set<String> stringAuthorities = authorities.stream().map(Authority::getName).collect(Collectors.toSet());

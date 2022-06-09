@@ -6,7 +6,17 @@ public class UserAccountDto extends ManagedUserVM {
     private String phoneNumber;
     private LocalDate birthdate;
 
+    private Long appUserId;
+
     public UserAccountDto() {
+    }
+
+    public Long getAppUserId() {
+        return appUserId;
+    }
+
+    public void setAppUserId(Long appUserId) {
+        this.appUserId = appUserId;
     }
 
     public String getPhoneNumber() {
