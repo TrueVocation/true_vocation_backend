@@ -1,16 +1,10 @@
 package com.truevocation.web.rest;
 
-import com.github.dockerjava.api.exception.UnauthorizedException;
 import com.truevocation.repository.FavoriteRepository;
 import com.truevocation.service.FavoriteService;
 import com.truevocation.service.UserService;
 import com.truevocation.service.dto.*;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +12,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * REST controller for managing {@link com.truevocation.domain.Favorite}.
@@ -138,7 +137,7 @@ public class FavoriteResource {
     /**
      * {@code PUT  /favorites/:id} : Updates an existing favorite.
      *
-     * @param id the id of the favoriteDTO to save.
+     * @param id          the id of the favoriteDTO to save.
      * @param favoriteDTO the favoriteDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated favoriteDTO,
      * or with status {@code 400 (Bad Request)} if the favoriteDTO is not valid,
@@ -172,7 +171,7 @@ public class FavoriteResource {
     /**
      * {@code PATCH  /favorites/:id} : Partial updates given fields of an existing favorite, field will ignore if it is null
      *
-     * @param id the id of the favoriteDTO to save.
+     * @param id          the id of the favoriteDTO to save.
      * @param favoriteDTO the favoriteDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated favoriteDTO,
      * or with status {@code 400 (Bad Request)} if the favoriteDTO is not valid,
@@ -180,7 +179,7 @@ public class FavoriteResource {
      * or with status {@code 500 (Internal Server Error)} if the favoriteDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/favorites/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/favorites/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<FavoriteDTO> partialUpdateFavorite(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody FavoriteDTO favoriteDTO
@@ -249,7 +248,7 @@ public class FavoriteResource {
     }
 
     @PostMapping("/user-favorite")
-    public ResponseEntity<Void> setPostFavorite(@RequestParam("userId")Long userId, @RequestParam("postId") Long postId){
-        return  favoriteService.setPostFavorite(userId, postId);
+    public ResponseEntity<Void> setPostFavorite(@RequestParam("userId") Long userId, @RequestParam("postId") Long postId) {
+        return favoriteService.setPostFavorite(userId, postId);
     }
 }

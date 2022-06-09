@@ -4,24 +4,24 @@ import com.truevocation.repository.AnswerUserRepository;
 import com.truevocation.service.AnswerUserService;
 import com.truevocation.service.dto.AnswerUserDTO;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * REST controller for managing {@link com.truevocation.domain.AnswerUser}.
@@ -67,21 +67,26 @@ public class AnswerUserResource {
     }
 
     @PostMapping("/answer-users-list")
-    public List<AnswerUserDTO> createAnswerUserList(@RequestBody List<AnswerUserDTO> answerUserDTOs) throws URISyntaxException {
+    public List<AnswerUserDTO> createAnswerUserList(@RequestBody List<AnswerUserDTO> answerUserDTOs) {
         log.debug("REST request to save AnswerUser : {}", answerUserDTOs);
-        answerUserDTOs.stream()
+        answerUserDTOs
             .forEach(answerUserDTO -> {
                 if (answerUserDTO.getId() != null) {
                     throw new BadRequestAlertException("A new answerUser cannot already have an ID", ENTITY_NAME, "idexists");
                 }
             });
-        List<AnswerUserDTO> result = answerUserService.saveAnswers(answerUserDTOs);
-        return result;
+        return answerUserService.saveAnswers(answerUserDTOs);
     }
+
+    @PostMapping("/answer-users-check/{id}")
+    public boolean checkAnswerUserList(@PathVariable Long id) {
+        return answerUserService.checkAnswerUserList(id);
+    }
+
     /**
      * {@code PUT  /answer-users/:id} : Updates an existing answerUser.
      *
-     * @param id the id of the answerUserDTO to save.
+     * @param id            the id of the answerUserDTO to save.
      * @param answerUserDTO the answerUserDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated answerUserDTO,
      * or with status {@code 400 (Bad Request)} if the answerUserDTO is not valid,
@@ -115,7 +120,7 @@ public class AnswerUserResource {
     /**
      * {@code PATCH  /answer-users/:id} : Partial updates given fields of an existing answerUser, field will ignore if it is null
      *
-     * @param id the id of the answerUserDTO to save.
+     * @param id            the id of the answerUserDTO to save.
      * @param answerUserDTO the answerUserDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated answerUserDTO,
      * or with status {@code 400 (Bad Request)} if the answerUserDTO is not valid,
@@ -123,7 +128,7 @@ public class AnswerUserResource {
      * or with status {@code 500 (Internal Server Error)} if the answerUserDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/answer-users/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/answer-users/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<AnswerUserDTO> partialUpdateAnswerUser(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody AnswerUserDTO answerUserDTO
@@ -190,7 +195,6 @@ public class AnswerUserResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
-
 
 
 }
