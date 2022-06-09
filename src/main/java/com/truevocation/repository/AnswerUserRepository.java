@@ -22,5 +22,6 @@ public interface AnswerUserRepository extends JpaRepository<AnswerUser, Long> {
 
     AnswerUser findAnswerUserByAppUserIdAndQuestionId(Long appUserId, Long questionId);
 
+    void  deleteAllByAppUser_Id(Long appUser_id);
 
 }

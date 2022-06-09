@@ -63,8 +63,9 @@ public class AnswerUserServiceImpl implements AnswerUserService {
 
     @Override
     public List<AnswerUserDTO> saveAnswers(List<AnswerUserDTO> answerUserDTOs) {
+        answerUserRepository.deleteAllByAppUser_Id(answerUserDTOs.get(0).getAppUser().getId());
         List<AnswerUserDTO> dbAnswerUsers = new ArrayList<>();
-        answerUserDTOs.stream().forEach(answerUserDTO -> {
+        answerUserDTOs.forEach(answerUserDTO -> {
             AnswerUserDTO answerUserDTOFromDb = answerUserMapper.toDto(answerUserRepository
                 .findAnswerUserByAppUserIdAndQuestionId(answerUserDTO.getAppUser().getId(),
                 answerUserDTO.getQuestion().getId()));
