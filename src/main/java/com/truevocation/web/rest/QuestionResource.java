@@ -196,6 +196,13 @@ public class QuestionResource {
         return ResponseEntity.ok().headers(headers).body(page);
     }
 
+    @GetMapping("/test-questions-list/{id}")
+    public ResponseEntity<List<QuestionDTO>> getAllQuestionsListByTestId(
+        @PathVariable Long id
+    ) {
+        return ResponseEntity.ok().body(questionService.findAllByProfTestId(id));
+    }
+
     /**
      * {@code GET  /questions/:id} : get the "id" question.
      *

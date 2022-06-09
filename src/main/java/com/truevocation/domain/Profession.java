@@ -66,7 +66,45 @@ public class Profession implements Serializable {
     @JsonIgnoreProperties(value = { "subjects", "professions", "faculty" }, allowSetters = true)
     private Set<Specialty> specialties = new HashSet<>();
 
+
+    @OneToMany(mappedBy = "profession")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "university", "user", "post", "specialty", "profession" }, allowSetters = true)
+    private Set<Favorite> favorites = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
+
+    public Set<Favorite> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(Set<Favorite> favorites) {
+        if (this.favorites != null) {
+            this.favorites.forEach(i -> i.setProfession(null));
+        }
+        if (favorites != null) {
+            favorites.forEach(i -> i.setProfession(this));
+        }
+        this.favorites = favorites;
+    }
+
+    public Profession favorites(Set<Favorite> favorites) {
+        this.setFavorites(favorites);
+        return this;
+    }
+
+    public Profession addFavorite(Favorite favorite) {
+        this.favorites.add(favorite);
+        favorite.setProfession(this);
+        return this;
+    }
+
+    public Profession removeFavorite(Favorite favorite) {
+        this.favorites.remove(favorite);
+        favorite.setProfession(null);
+        return this;
+    }
 
     public Long getId() {
         return this.id;

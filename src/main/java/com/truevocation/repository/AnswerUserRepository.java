@@ -2,7 +2,7 @@ package com.truevocation.repository;
 
 import com.truevocation.domain.Answer;
 import com.truevocation.domain.AnswerUser;
-import org.springframework.data.jpa.repository.*;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

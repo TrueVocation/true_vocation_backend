@@ -34,6 +34,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("select distinct question from Question question left join fetch question.answers")
     List<Question> findAllWithEagerRelationships();
 
+    List<Question> findAllByProfTestId(Long profTest_id);
+
     @Query("select question from Question question left join fetch question.answers where question.id =:id")
     Optional<Question> findOneWithEagerRelationships(@Param("id") Long id);
 }

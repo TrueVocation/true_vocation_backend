@@ -67,7 +67,7 @@ public class University implements Serializable {
 
     @OneToMany(mappedBy = "university")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "university", "user", "post" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "university", "user", "post", "specialty", "profession" }, allowSetters = true)
     private Set<Favorite> favorites = new HashSet<>();
 
     @OneToMany(mappedBy = "university")

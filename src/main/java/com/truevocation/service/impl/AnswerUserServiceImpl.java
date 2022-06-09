@@ -1,16 +1,12 @@
 package com.truevocation.service.impl;
 
 import com.truevocation.domain.AnswerUser;
-import com.truevocation.domain.Aptitude;
 import com.truevocation.repository.AnswerUserRepository;
 import com.truevocation.repository.AptitudeRepository;
 import com.truevocation.service.AnswerUserService;
-import com.truevocation.service.dto.*;
+import com.truevocation.service.dto.AnswerUserDTO;
+import com.truevocation.service.dto.UserAptitudesDTO;
 import com.truevocation.service.mapper.AnswerUserMapper;
-
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.truevocation.service.mapper.AptitudeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +14,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Service Implementation for managing {@link AnswerUser}.
@@ -61,6 +62,11 @@ public class AnswerUserServiceImpl implements AnswerUserService {
     }
 
     @Override
+    public boolean checkAnswerUserList(Long id) {
+        return answerUserRepository.findAllByAppUserId(id).isEmpty();
+    }
+
+    @Override
     public Optional<AnswerUserDTO> partialUpdate(AnswerUserDTO answerUserDTO) {
         log.debug("Request to partially update AnswerUser : {}", answerUserDTO);
 
@@ -95,12 +101,12 @@ public class AnswerUserServiceImpl implements AnswerUserService {
         answerUserRepository.deleteById(id);
     }
 
-    public List<UserAptitudesDTO> userAptitudes(Long appUserdtoId){
+    public List<UserAptitudesDTO> userAptitudes(Long appUserdtoId) {
 
         List<UserAptitudesDTO> userAptitudes = new ArrayList<>();
 
         List<AnswerUserDTO> userAnswers = new ArrayList();
-        if(appUserdtoId != null) {
+        if (appUserdtoId != null) {
             answerUserRepository.findAllByAppUserId(appUserdtoId)
                 .forEach(answerUser -> userAnswers.add(answerUserMapper.toDto(answerUser)));
 
@@ -111,7 +117,7 @@ public class AnswerUserServiceImpl implements AnswerUserService {
             AtomicInteger fifthAptitude = new AtomicInteger();
             AtomicInteger sixthAptitude = new AtomicInteger();
 
-            userAnswers.stream().map(AnswerUserDTO::getAnswer).forEach(answerDTO ->{
+            userAnswers.stream().map(AnswerUserDTO::getAnswer).forEach(answerDTO -> {
                 switch (answerDTO.getPoint()) {
                     case 1: {
                         firstAptitude.getAndIncrement();
@@ -135,15 +141,27 @@ public class AnswerUserServiceImpl implements AnswerUserService {
                         break;
                 }
             });
-            for(int i = 1; i <= 6; i++){
+            for (int i = 1; i <= 6; i++) {
                 UserAptitudesDTO userAptitudesDTO = new UserAptitudesDTO();
                 userAptitudesDTO.setAptitudeDTO(aptitudeMapper.toDto(aptitudeRepository.findAptitudeByCode(i)));
-                if(i == 1){userAptitudesDTO.setScore(firstAptitude.intValue());}
-                if(i == 2){userAptitudesDTO.setScore(secondAptitude.intValue());}
-                if(i == 3){userAptitudesDTO.setScore(thirdAptitude.intValue());}
-                if(i == 4){userAptitudesDTO.setScore(fourthAptitude.intValue());}
-                if(i == 5){userAptitudesDTO.setScore(fifthAptitude.intValue());}
-                if(i == 6){userAptitudesDTO.setScore(sixthAptitude.intValue());}
+                if (i == 1) {
+                    userAptitudesDTO.setScore(firstAptitude.intValue());
+                }
+                if (i == 2) {
+                    userAptitudesDTO.setScore(secondAptitude.intValue());
+                }
+                if (i == 3) {
+                    userAptitudesDTO.setScore(thirdAptitude.intValue());
+                }
+                if (i == 4) {
+                    userAptitudesDTO.setScore(fourthAptitude.intValue());
+                }
+                if (i == 5) {
+                    userAptitudesDTO.setScore(fifthAptitude.intValue());
+                }
+                if (i == 6) {
+                    userAptitudesDTO.setScore(sixthAptitude.intValue());
+                }
                 userAptitudes.add(userAptitudesDTO);
             }
             return userAptitudes;

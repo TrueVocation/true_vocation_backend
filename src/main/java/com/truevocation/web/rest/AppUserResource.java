@@ -182,6 +182,14 @@ public class AppUserResource {
         return ResponseUtil.wrapOrNotFound(appUserDTO);
     }
 
+    @GetMapping("/app-users-by-user/{id}")
+    public ResponseEntity<AppUserDTO> getAppUserByUserIi(@PathVariable Long id) {
+        log.debug("REST request to get AppUser : {}", id);
+        Optional<AppUserDTO> appUserDTO = appUserService.findByUserId(id);
+        appUserDTO.ifPresent(userDTO -> userDTO.setUser(null));
+        return ResponseUtil.wrapOrNotFound(appUserDTO);
+    }
+
     /**
      * {@code DELETE  /app-users/:id} : delete the "id" appUser.
      *

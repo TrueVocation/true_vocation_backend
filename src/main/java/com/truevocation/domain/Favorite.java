@@ -30,6 +30,14 @@ public class Favorite implements Serializable {
     private University university;
 
     @ManyToOne
+    @JsonIgnoreProperties(value = { "subjects", "professions", "faculty" }, allowSetters = true)
+    private Specialty specialty;
+
+    @ManyToOne
+    @JsonIgnoreProperties(value = { "demandProfessionCities", "recommendations", "courses", "specialties" }, allowSetters = true)
+    private Profession profession;
+
+    @ManyToOne
     @JsonIgnoreProperties(
         value = { "user", "comments", "favorites", "commentAnswers", "likes", "portfolio", "testResult" },
         allowSetters = true
@@ -41,6 +49,23 @@ public class Favorite implements Serializable {
     private Post post;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
+
+    public Specialty getSpecialty() {
+        return specialty;
+    }
+
+    public void setSpecialty(Specialty specialty) {
+        this.specialty = specialty;
+    }
+
+    public Profession getProfession() {
+        return profession;
+    }
+
+    public void setProfession(Profession profession) {
+        this.profession = profession;
+    }
 
     public Long getId() {
         return this.id;
@@ -78,6 +103,16 @@ public class Favorite implements Serializable {
 
     public Favorite university(University university) {
         this.setUniversity(university);
+        return this;
+    }
+
+    public Favorite specilty(Specialty specialty) {
+        this.setSpecialty(specialty);
+        return this;
+    }
+
+    public Favorite profession(Profession profession) {
+        this.setProfession(profession);
         return this;
     }
 

@@ -2,26 +2,28 @@ package com.truevocation.web.rest;
 
 import com.truevocation.repository.FavoriteRepository;
 import com.truevocation.service.FavoriteService;
-import com.truevocation.service.dto.FavoriteDTO;
+import com.truevocation.service.UserService;
+import com.truevocation.service.dto.*;
 import com.truevocation.web.rest.errors.BadRequestAlertException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * REST controller for managing {@link com.truevocation.domain.Favorite}.
@@ -40,6 +42,10 @@ public class FavoriteResource {
     private final FavoriteService favoriteService;
 
     private final FavoriteRepository favoriteRepository;
+
+
+    @Autowired
+    private UserService userService;
 
     public FavoriteResource(FavoriteService favoriteService, FavoriteRepository favoriteRepository) {
         this.favoriteService = favoriteService;
@@ -66,10 +72,72 @@ public class FavoriteResource {
             .body(result);
     }
 
+    @PostMapping("/check-favorites-university")
+    public boolean checkFavoritesUniversity(@RequestBody FavoriteDTO favoriteDTO) {
+        return favoriteService.isFavoriteUniversity(favoriteDTO.getUniversity().getId(), favoriteDTO.getUser().getId());
+    }
+
+    @PostMapping("/check-favorites-speciality")
+    public boolean checkFavoritesSpeciality(@RequestBody FavoriteDTO favoriteDTO) {
+        return favoriteService.isFavoriteSpeciality(favoriteDTO.getSpecialty().getId(), favoriteDTO.getUser().getId());
+    }
+
+    @PostMapping("/check-favorites-profession")
+    public boolean checkFavoritesProfession(@RequestBody FavoriteDTO favoriteDTO) {
+        return favoriteService.isFavoriteProfession(favoriteDTO.getProfession().getId(), favoriteDTO.getUser().getId());
+    }
+
+    @DeleteMapping("/delete-favorites-profession")
+    public void deleteFavoritesProfession(@RequestBody FavoriteDTO favoriteDTO) {
+        favoriteService.deleteFavoriteProfession(favoriteDTO.getProfession().getId(), favoriteDTO.getUser().getId());
+    }
+
+    @DeleteMapping("/delete-favorites-speciality")
+    public void deleteFavoritesSpeciality(@RequestBody FavoriteDTO favoriteDTO) {
+        favoriteService.deleteFavoriteSpeciality(favoriteDTO.getSpecialty().getId(), favoriteDTO.getUser().getId());
+    }
+
+    @DeleteMapping("/delete-favorites-university")
+    public void deleteFavoritesUniversity(@RequestBody FavoriteDTO favoriteDTO) {
+        favoriteService.deleteFavoriteUniversity(favoriteDTO.getUniversity().getId(), favoriteDTO.getUser().getId());
+    }
+
+    @GetMapping("/favorites-universities/{id}")
+    public ResponseEntity<List<UniversityDTO>> getAllFavoritesUniversitiesByUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable, @PathVariable Long id) {
+        log.debug("REST request to get a page of Favorites-Universities");
+        Page<UniversityDTO> page = favoriteService.findAllFavoritesUniversitiesByUserId(pageable, id);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/favorites-specialities/{id}")
+    public ResponseEntity<List<SpecialtyDTO>> getAllFavoritesSpecialitiesByUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable, @PathVariable Long id) {
+        log.debug("REST request to get a page of Favorites-Universities");
+        Page<SpecialtyDTO> page = favoriteService.findAllFavoriteSpecialtyByUserId(pageable, id);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/favorites-professions/{id}")
+    public ResponseEntity<List<ProfessionDTO>> getAllFavoritesProfessionsByUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable, @PathVariable Long id) {
+        log.debug("REST request to get a page of Favorites-Universities");
+        Page<ProfessionDTO> page = favoriteService.findAllFavoriteProfessionByUserId(pageable, id);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/favorites-posts/{id}")
+    public ResponseEntity<List<PostDTO>> getAllFavoritesPostsByUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable, @PathVariable Long id) {
+        log.debug("REST request to get a page of Favorites-Universities");
+        Page<PostDTO> page = favoriteService.findAllFavoritePostByUserId(pageable, id);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
     /**
      * {@code PUT  /favorites/:id} : Updates an existing favorite.
      *
-     * @param id the id of the favoriteDTO to save.
+     * @param id          the id of the favoriteDTO to save.
      * @param favoriteDTO the favoriteDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated favoriteDTO,
      * or with status {@code 400 (Bad Request)} if the favoriteDTO is not valid,
@@ -103,7 +171,7 @@ public class FavoriteResource {
     /**
      * {@code PATCH  /favorites/:id} : Partial updates given fields of an existing favorite, field will ignore if it is null
      *
-     * @param id the id of the favoriteDTO to save.
+     * @param id          the id of the favoriteDTO to save.
      * @param favoriteDTO the favoriteDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated favoriteDTO,
      * or with status {@code 400 (Bad Request)} if the favoriteDTO is not valid,
@@ -111,7 +179,7 @@ public class FavoriteResource {
      * or with status {@code 500 (Internal Server Error)} if the favoriteDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/favorites/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/favorites/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<FavoriteDTO> partialUpdateFavorite(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody FavoriteDTO favoriteDTO
@@ -180,7 +248,7 @@ public class FavoriteResource {
     }
 
     @PostMapping("/user-favorite")
-    public ResponseEntity<Void> setPostFavorite(@RequestParam("userId")Long userId, @RequestParam("postId") Long postId){
-        return  favoriteService.setPostFavorite(userId, postId);
+    public ResponseEntity<Void> setPostFavorite(@RequestParam("userId") Long userId, @RequestParam("postId") Long postId) {
+        return favoriteService.setPostFavorite(userId, postId);
     }
 }

@@ -6,16 +6,12 @@ import com.truevocation.repository.FavoriteRepository;
 import com.truevocation.service.AppUserService;
 import com.truevocation.service.FavoriteService;
 import com.truevocation.service.PostService;
-import com.truevocation.service.dto.AppUserDTO;
-import com.truevocation.service.dto.FavoriteDTO;
-import com.truevocation.service.dto.PostDTO;
-import com.truevocation.service.mapper.AppUserMapper;
-import com.truevocation.service.mapper.FavoriteMapper;
+import com.truevocation.service.dto.*;
+import com.truevocation.service.mapper.*;
 
 import java.util.Objects;
 import java.util.Optional;
 
-import com.truevocation.service.mapper.PostMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +42,15 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private UniversityMapper universityMapper;
+
+    @Autowired
+    private SpecialtyMapper specialtyMapper;
+
+    @Autowired
+    private ProfessionMapper professionMapper;
 
     @Autowired
     private PostMapper postMapper;
@@ -90,6 +95,34 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<UniversityDTO> findAllFavoritesUniversitiesByUserId(Pageable pageable, Long id) {
+        log.debug("Request to get all Favorites");
+        return favoriteRepository.findAllFavoriteUniversityByUserId(pageable, id).map(universityMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<SpecialtyDTO> findAllFavoriteSpecialtyByUserId(Pageable pageable, Long id) {
+        log.debug("Request to get all Favorites");
+        return favoriteRepository.findAllFavoriteSpecialtyByUserId(pageable, id).map(specialtyMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProfessionDTO> findAllFavoriteProfessionByUserId(Pageable pageable, Long id) {
+        log.debug("Request to get all Favorites");
+        return favoriteRepository.findAllFavoriteProfessionByUserId(pageable, id).map(professionMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PostDTO> findAllFavoritePostByUserId(Pageable pageable, Long id) {
+        log.debug("Request to get all Favorites");
+        return favoriteRepository.findAllFavoritePostByUserId(pageable, id).map(postMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Optional<FavoriteDTO> findOne(Long id) {
         log.debug("Request to get Favorite : {}", id);
         return favoriteRepository.findById(id).map(favoriteMapper::toDto);
@@ -104,6 +137,36 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     public boolean isFavorite(Long postId, Long userId) {
         return favoriteRepository.isFavorite(postId, userId);
+    }
+
+    @Override
+    public boolean isFavoriteUniversity(Long universityId, Long userId) {
+        return favoriteRepository.isFavoriteUniversity(universityId, userId);
+    }
+
+    @Override
+    public boolean isFavoriteSpeciality(Long specialtyId, Long userId) {
+        return favoriteRepository.isFavoriteUniversity(specialtyId, userId);
+    }
+
+    @Override
+    public boolean isFavoriteProfession(Long professionId, Long userId) {
+        return favoriteRepository.isFavoriteUniversity(professionId, userId);
+    }
+
+    @Override
+    public void deleteFavoriteProfession(Long professionId, Long userId) {
+        favoriteRepository.deleteFavoriteProfession(professionId, userId);
+    }
+
+    @Override
+    public void deleteFavoriteSpeciality(Long specialtyId, Long userId) {
+        favoriteRepository.deleteFavoriteSpeciality(specialtyId, userId);
+    }
+
+    @Override
+    public void deleteFavoriteUniversity(Long universityId, Long userId) {
+        favoriteRepository.deleteFavoriteUniversity(universityId, userId);
     }
 
     @Override
