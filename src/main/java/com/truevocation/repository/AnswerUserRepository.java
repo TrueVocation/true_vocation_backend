@@ -20,4 +20,7 @@ public interface AnswerUserRepository extends JpaRepository<AnswerUser, Long> {
 
     List<Answer> findAllByAnswerPoint(int point);
 
+    AnswerUser findAnswerUserByAppUserIdAndQuestionId(Long appUserId, Long questionId);
+
+
 }

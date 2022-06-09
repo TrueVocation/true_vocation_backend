@@ -52,11 +52,27 @@ public class AnswerUserServiceImpl implements AnswerUserService {
         return answerUserMapper.toDto(answerUser);
     }
 
+    public AnswerUserDTO saveAnswerUser(AnswerUserDTO answerUserDTO) {
+        log.debug("Request to save AnswerUser : {}", answerUserDTO);
+        AnswerUser answerUser = answerUserMapper.toEntity(answerUserDTO);
+        answerUser = answerUserRepository.save(answerUser);
+        return answerUserMapper.toDto(answerUser);
+    }
+
     @Override
     public List<AnswerUserDTO> saveAnswers(List<AnswerUserDTO> answerUserDTOs) {
         List<AnswerUserDTO> dbAnswerUsers = new ArrayList<>();
         answerUserDTOs.stream().forEach(answerUserDTO -> {
-            dbAnswerUsers.add(save(answerUserDTO));
+            AnswerUserDTO answerUserDTOFromDb = answerUserMapper.toDto(answerUserRepository
+                .findAnswerUserByAppUserIdAndQuestionId(answerUserDTO.getAppUser().getId(),
+                answerUserDTO.getQuestion().getId()));
+            if(answerUserDTOFromDb != null){
+                answerUserDTOFromDb.setAnswer(answerUserDTO.getAnswer());
+                partialUpdate(answerUserDTOFromDb);
+            }else{
+                save(answerUserDTO);
+            }
+            dbAnswerUsers.add(answerUserDTO);
         });
         return dbAnswerUsers;
     }
