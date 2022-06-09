@@ -213,7 +213,7 @@ jhipster:
 # application:
 
 truevocation:
-  is-production: false
+  is-production: true
 
 
 file:
